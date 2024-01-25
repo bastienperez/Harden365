@@ -306,8 +306,10 @@ foreach ($role in $roles) {
         }
 
 #IMPORT ROLE ELIGIBLE MEMBER
-$EligibleAADUserData = @()
-$EligibleAADGroupData = @()
+#$EligibleAADUserData = @()
+[System.Collections.Generic.List[PSObject]]$EligibleAADUserData = @()
+[System.Collections.Generic.List[PSObject]]$EligibleAADGroupData = @()
+
 Import-Module -Name Microsoft.Graph.Identity.Governance -Force
 $AllEligible = Get-MgRoleManagementDirectoryRoleEligibilityScheduleInstance -ExpandProperty "*" -All
 $AllAssignments = Get-MgRoleManagementDirectoryRoleAssignmentScheduleInstance -ExpandProperty "*" -All
@@ -317,26 +319,27 @@ $AllAssignments = Get-MgRoleManagementDirectoryRoleAssignmentScheduleInstance -E
 foreach($Role in $AllEligible){
 
     If($Role.Principal.AdditionalProperties.'@odata.type' -eq "#microsoft.graph.user"){
-        $UserProperties = [pscustomobject]@{
+        $UserProperties  = [PSCustomObject][ordered]@{
             displayName = $Role.Principal.AdditionalProperties.displayName
             UserPrincipalName = $Role.Principal.AdditionalProperties.userPrincipalName
             StartDateTime = $Role.StartDateTime
             EndDateTime = $(If($null -eq $Role.EndDateTime){"Permanent"}else{$Role.EndDateTime})
             RoleName = $Role.RoleDefinition.DisplayName
         }
-        $EligibleAADUserData += $UserProperties
+
+        $EligibleAADUserData.Add($UserProperties)
     }
 }
 
 foreach($Role in $AllAssignments){
         If($Role.Principal.AdditionalProperties.'@odata.type' -eq "#microsoft.graph.group"){
-        $GroupProperties= [pscustomobject]@{
+        $GroupProperties= [PSCustomObject][ordered]@{
             displayName = $Role.Principal.AdditionalProperties.displayName
             mailNickname = $Role.Principal.AdditionalProperties.mailNickname
             securityIdentifier = $Role.Principal.AdditionalProperties.securityIdentifier
             RoleName = $Role.RoleDefinition.DisplayName
         }
-        $EligibleAADGroupData += $GroupProperties
+        $EligibleAADGroupData.Add($GroupProperties)
         }
     }
 

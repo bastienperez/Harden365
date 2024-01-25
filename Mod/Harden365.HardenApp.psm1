@@ -78,7 +78,7 @@ $ApplicationPermissions = @(
 )
  
 #Add app permissions
-$ResourceAccessArray = @()
+[System.Collections.Generic.List[PSObject]]$ResourceAccessArray = @()
 ForEach ($permission in $ApplicationPermissions) {
 $reqPermission = $null
 #Get required app permission
@@ -88,7 +88,7 @@ if($reqPermission)
 $resourceAccess = @{
     Type = "Role"
     Id = $reqPermission.Id    }
-$ResourceAccessArray += $resourceAccess
+    ResourceAccessArray.Add($resourceAccess)
 }
 else
 {

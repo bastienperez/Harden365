@@ -38,7 +38,8 @@ $Users = Get-MsolUser -All | Where-Object {$_.IsLicensed -eq $true} | Select-Obj
                                                                         @{Name = 'PhoneNumbers'; Expression = {($_.StrongAuthenticationUserDetails).PhoneNumber}},
                                                                         @{Name = 'LicensePlans'; Expression = {(($_.licenses).Accountsku).SkupartNumber}}
 
-$ExportUsers = @()
+#$ExportUsers = @()
+[System.Collections.Generic.List[PSObject]]$ExportUsers = @()
           foreach ($user in $Users) {
 
             $LicenseNames = $user.LicensePlans
@@ -69,18 +70,19 @@ $ExportUsers = @()
                    "PhoneAppNotification" { $MFAMethod = "Authenticator app" }
                     }
 
-               $Props = @{
-                "UserPrincipalName" =  $user.UserPrincipalName
-                "When Created" =  $user.WhenCreated
-                "Password LastChange" =  $user.LastPasswordChangeTimestamp
-                "Password NeverExpires" = $user.PasswordNeverExpires
-                "Licenses" = $LicenseNames
-                "MFA Enabled" = if ($user.StrongAuthenticationMethods) {$True} else {$False}
-                "MFA Method" = $MFAMethod
-                "MFA Enforced" = if ($user.StrongAuthenticationRequirements) {$True} else {$False}
-                "PhoneNumbers" =  $user.PhoneNumbers
+                $object = [PSCustomObject][ordered]@{
+                    "UserPrincipalName" =  $user.UserPrincipalName
+                    "When Created" =  $user.WhenCreated
+                    "Password LastChange" =  $user.LastPasswordChangeTimestamp
+                    "Password NeverExpires" = $user.PasswordNeverExpires
+                    "Licenses" = $LicenseNames
+                    "MFA Enabled" = if ($user.StrongAuthenticationMethods) {$True} else {$False}
+                    "MFA Method" = $MFAMethod
+                    "MFA Enforced" = if ($user.StrongAuthenticationRequirements) {$True} else {$False}
+                    "PhoneNumbers" =  $user.PhoneNumbers
                 }
-                $ExportUsers += New-Object PSObject -Property $Props
+                
+                $ExportUsers.Add($object)
                 }
      
 #mkdir -Force ".\Input" | Out-Null

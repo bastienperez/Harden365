@@ -51,11 +51,12 @@ Try {
      if($_.ImportPhoneNumber -eq "YES")
      {
             $Requirements = @()
+            [System.Collections.Generic.List[PSObject]]$Requirements = @()
         if ($State -ne "Disabled") {
             $Requirement = [Microsoft.Online.Administration.StrongAuthenticationRequirement]::new()
             $Requirement.RelyingParty = "*"
             $Requirement.State = "Enabled"
-            $Requirements += $Requirement
+            $Requirements.add($Requirement)
         }
         Set-MsolUser -UserPrincipalName $_.UserPrincipalName -StrongAuthenticationRequirements $Requirements
      Write-LogInfo "$($_.UserPrincipalName) : PhoneNumber $($_.PhoneNumbers) added"
