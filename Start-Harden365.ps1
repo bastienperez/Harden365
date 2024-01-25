@@ -43,7 +43,7 @@ $totalCountofOperations = 2
 $currentCountOfOperations = 0
 
 clear-Host
-#(0..10)| ForEach-Object {write-host }
+#(0..10)| ForEach-Object {Write-Host }
 
 $sLogoData = Get-Content (".\Config\Harden365s.logo")
 foreach ($line in $sLogoData){Write-Host $line -ForegroundColor Red}
@@ -51,49 +51,49 @@ foreach ($line in $sLogoData){Write-Host $line -ForegroundColor Red}
 ## CREDENTIALS
 try { 
         Get-Command Get-Mgcontext -ErrorAction Stop > $null
-        write-host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline
-        write-Host ("Check GRAPH Powershell Module OK") -ForegroundColor green
+        Write-Host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline
+        Write-Host ("Check GRAPH Powershell Module OK") -ForegroundColor green
          }
 catch {
        # CHECK ADMIN RUN
        $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
        $isAdmin = $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
        if (!$isAdmin) {
-        write-host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline
-        Write-host 'You must run this script as an administrator to install Powershell Graph module' -ForegroundColor red
-        write-host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline
-        Write-host 'Script execution cancelled' -ForegroundColor Red
+        Write-Host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline
+        Write-Host 'You must run this script as an administrator to install Powershell Graph module' -ForegroundColor red
+        Write-Host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline
+        Write-Host 'Script execution cancelled' -ForegroundColor Red
         Pause;Break
         }
         # CHECK POWERSHELL
         if(($PSVersionTable.PSVersion.Major -lt 5) -or ($PSVersionTable.PSVersion.Major -eq 5 -and $PSVersionTable.PSVersion.Minor -eq 0)){
-            write-host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline
-            write-host 'Please install Powershell version 5.1' -ForegroundColor red
-            write-host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline
-            write-host 'https://www.microsoft.com/en-us/download/details.aspx?id=54616' -ForegroundColor red
+            Write-Host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline
+            Write-Host 'Please install Powershell version 5.1' -ForegroundColor red
+            Write-Host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline
+            Write-Host 'https://www.microsoft.com/en-us/download/details.aspx?id=54616' -ForegroundColor red
             break Script
         } else {
-		write-host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline
-            write-host 'Powershell Version OK' -ForegroundColor green
+		Write-Host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline
+            Write-Host 'Powershell Version OK' -ForegroundColor green
         }
         # CHECK / INSTALL NUGET
         if($(Get-PackageProvider).Name -notcontains 'NuGet'){
-            write-host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline
-            write-host "NuGet Provider necessary" -ForegroundColor yellow
+            Write-Host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline
+            Write-Host "NuGet Provider necessary" -ForegroundColor yellow
             Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted  
             Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force | Out-Null
         }
         # INSTALL GRAPH
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-        write-host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline
-        write-Host ("Installing GRAPH Powershell Module") -ForegroundColor green
+        Write-Host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline
+        Write-Host ("Installing GRAPH Powershell Module") -ForegroundColor green
         Install-Module 'Microsoft.Graph' -MinimumVersion 2.11.0 -AllowClobber
         Set-PSRepository -Name 'PSGallery' -InstallationPolicy Untrusted
         }
 
 Try {
-    write-host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline
-    write-Host("PLEASE CONNECT TO GRAPH WITH GLOBAL ADMINISTRATOR") -ForegroundColor Yellow
+    Write-Host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline
+    Write-Host("PLEASE CONNECT TO GRAPH WITH GLOBAL ADMINISTRATOR") -ForegroundColor Yellow
     Connect-MgGraph -ContextScope Process -Scopes Directory.Read.All,`
                                                   RoleManagement.ReadWrite.Directory,`
                                                   User.ReadWrite.All,`
@@ -109,7 +109,7 @@ Try {
                                                   Policy.ReadWrite.Authorization -NoWelcome -Erroraction Stop
     }
 catch {
-    write-host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline
+    Write-Host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline
     Write-Host $_.Exception.Message -ForegroundColor red
     Read-Host -Prompt "Press Enter to quit_"
     Break
@@ -121,7 +121,7 @@ catch {
     }
     
     ## INTERFACE
-    write-host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline
+    Write-Host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline
     Write-Host("LOADING HARDEN 365") -ForegroundColor Red
     $pwd
     Import-Module '.\Config\Harden365.debug.psm1'
