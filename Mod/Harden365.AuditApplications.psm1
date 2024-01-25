@@ -116,8 +116,9 @@ Function Start-TEAAudit {
     #>
 
 Write-LogInfo "**** AUDIT APPLICATION TEAMS"
-try { Get-CsTenant -Erroraction Stop | Out-Null 
-             } catch { Connect-MicrosoftTeams -Erroraction silentlyContinue | Out-Null }
+try { 
+    $null = Get-CsTenant -Erroraction Stop
+             } catch { $null = Connect-MicrosoftTeams -Erroraction silentlyContinue}
 
 <#LEGACY AUTHENTIFICATION
 if ($(Get-CsOAuthConfiguration).ClientAdalAuthOverride -eq "Disallowed") { 
@@ -226,7 +227,7 @@ else {Write-LogInfo "Standard users already disabled to create trial/developer s
 #BLOCKPAYABLESUBSCRIPTION
 try {Get-MSCommerceProductPolicies -PolicyId AllowSelfServicePurchase -ErrorAction Stop}
 catch {
-    Connect-MSCommerce | Out-Null
+    $null = Connect-MSCommerce
     }
 
 $Products = Get-MSCommerceProductPolicies -PolicyId AllowSelfServicePurchase

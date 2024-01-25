@@ -83,7 +83,8 @@ $ExportUsers = @()
                 $ExportUsers += New-Object PSObject -Property $Props
                 }
      
-mkdir -Force ".\Input" | Out-Null
+#mkdir -Force ".\Input" | Out-Null
+$null = New-Item -ItemType Directory -Name "Input"
 $ExportUsers | Sort-Object  UserPrincipalName,Licenses | Select-object UserPrincipalName,Licenses,"When Created","Password LastChange","Password NeverExpires","MFA Enabled","MFA Enforced","MFA Method",PhoneNumbers,ImportPhoneNumber | Export-Csv -Path `
 ".\Input\ImportPhoneNumbers.csv" -Delimiter ';' -Encoding UTF8 -NoTypeInformation
 Write-LogInfo "Extract Users Detail to CSV in folder .\Input"

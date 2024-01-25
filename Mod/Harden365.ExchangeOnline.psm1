@@ -98,7 +98,7 @@ $GroupEOL=(Get-UnifiedGroup | Where-Object { $_.DisplayName -eq $Name}).Name
     if (-not $GroupEOL)
         {
         Try {
-            New-UnifiedGroup -Name $name -DisplayName $Name  -Alias $Alias -AccessType Private -Confirm:$false | Out-Null
+            $null = New-UnifiedGroup -Name $name -DisplayName $Name  -Alias $Alias -AccessType Private -Confirm:$false
             Set-UnifiedGroup -Identity $Name -HiddenFromAddressListsEnabled $true -HiddenFromExchangeClientsEnabled -UnifiedGroupWelcomeMessageEnabled:$false
             Write-LogInfo "Group '$Name' created"
             }
@@ -139,7 +139,7 @@ $CheckName=(Get-QuarantinePolicy | Where-Object { $_.Name -eq $Name}).Name
     if (-not $CheckName)
         {
         Try {
-            New-QuarantinePolicy -Name $Name -EndUserQuarantinePermissionsValue $EndUserQuarantinePermissionsValue -EndUserSpamNotificationFrequencyInDays $EndUserSpamNotificationFrequencyInDays -EsnEnabled $EsnEnabled | Out-Null
+            $null = New-QuarantinePolicy -Name $Name -EndUserQuarantinePermissionsValue $EndUserQuarantinePermissionsValue -EndUserSpamNotificationFrequencyInDays $EndUserSpamNotificationFrequencyInDays -EsnEnabled $EsnEnabled
             Write-LogInfo "Quarantine Policy '$Name' created"
             }
                  Catch {

@@ -49,7 +49,7 @@ Try {
      Import-CSV ".\Input\$ImportCSV" -Delimiter ";" | ForEach-Object {
      if($_.ImportPhoneNumber -eq "YES")
      {
-     New-MgUserAuthenticationPhoneMethod -UserId $($_.UserPrincipalName) -phoneType "mobile" -phoneNumber $($_.PhoneNumbers) | Out-Null
+     $null = New-MgUserAuthenticationPhoneMethod -UserId $($_.UserPrincipalName) -phoneType "mobile" -phoneNumber $($_.PhoneNumbers)
      Write-LogInfo "$($_.UserPrincipalName) : PhoneNumber $($_.PhoneNumbers) added"
      }
      else { 

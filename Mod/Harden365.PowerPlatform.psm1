@@ -91,7 +91,7 @@ Function Start-BlockSubscriptionPayable {
 #BLOCKPAYABLESUBSCRIPTION
 try {Get-MSCommerceProductPolicies -PolicyId AllowSelfServicePurchase -ErrorAction Stop}
 catch {
-    Connect-MSCommerce | Out-Null
+    $null = Connect-MSCommerce
     }
 
 $Products = Get-MSCommerceProductPolicies -PolicyId AllowSelfServicePurchase
@@ -99,7 +99,7 @@ ForEach ($Product in $Products) {
         $productName = $Product.ProductName
     if ($Product.PolicyValue -eq "Enabled") {
         Write-LogWarning "Prevent standard users from creating $ProductName payable subscriptions"
-        Update-MSCommerceProductPolicy -PolicyId AllowSelfServicePurchase -ProductId $Product.ProductId -Enabled $false | Out-Null
+        $null = Update-MSCommerceProductPolicy -PolicyId AllowSelfServicePurchase -ProductId $Product.ProductId -Enabled $false
         Write-LogInfo "Disable standard users from creating $ProductName payable subscriptions"}
     else {Write-LogInfo "Standard users already disabled to subscribe $ProductName payable subscriptions"}
     }

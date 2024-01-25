@@ -188,7 +188,7 @@ foreach ($Domain in $Domains){
             $DKIMResults += $Domain
             }
             elseif (((Get-DkimSigningConfig -Identity $Domain).Status -eq "CnameMissing") -and ((Get-DkimSigningConfig -Identity $Domain).Enabled -eq $false)) {
-                    Set-DkimSigningConfig -Identity $Domain -Enabled $true | Out-Null
+                    $null = Set-DkimSigningConfig -Identity $Domain -Enabled $true
                     Write-LogInfo "$Domain : DKIM Enabled"
                     } 
                   }
@@ -199,7 +199,7 @@ foreach ($Domain in $Domains){
 #SCRIPT DKIM 2048 KEYSIZE
 foreach ($Domain in $Domains) {
       if (((Get-DkimSigningConfig -Identity $Domain).Selector1KeySize -eq "1024") -and ((Get-DkimSigningConfig -Identity $Domain).Enabled -eq $true)) {
-      Rotate-DkimSigningConfig -KeySize 2048 -Identity $Domain | Out-Null
+      $null = Rotate-DkimSigningConfig -KeySize 2048 -Identity $Domain
       Write-LogInfo "$Domain : DKIM Config changed with keysize 2048"}
       }
                     

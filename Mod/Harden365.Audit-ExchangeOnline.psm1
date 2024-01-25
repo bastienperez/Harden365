@@ -210,7 +210,8 @@ $DomainOnM365 = (Get-MgDomain | Where-Object { $_.IsDefault -eq $true }).Id
 # Export CSV
 Write-Loginfo "Check permissions in all Contacts"
 $dateFileString = Get-Date -Format "FileDateTimeUniversal"
-mkdir -Force ".\Audit" | Out-Null
+#mkdir -Force ".\Audit" | Out-Null
+$null = New-Item -ItemType Directory -Name "Audit"
 $ContactPermissions | Select-Object Identity,User,AccessRights | Export-Csv -Path ".\$DomainOnM365\AuditContactPermission$dateFileString.csv" -Delimiter ';' -Encoding UTF8 -NoTypeInformation
 Write-LogInfo "Audit file generated in folder .\$DomainOnM365"      
 }
