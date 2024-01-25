@@ -143,7 +143,6 @@ Function Start-DefenderO365P1SafeLinks {
     [Boolean]$DoNotAllowClickThrough = $true,
     [String]$DoNotRewriteUrls = $UrlSafeLinksExcept,
     [Boolean]$TrackClicks = $true,
-    [Boolean]$EnableSafeLinksForO365Clients = $true,
 	[String]$Priority = "0"
 )
 
