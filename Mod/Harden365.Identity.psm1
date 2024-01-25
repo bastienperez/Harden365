@@ -11,40 +11,39 @@
          
     #>
 
-#SCRIPT
-if ((Get-MsolCompanyInformation).UsersPermissionToUserConsentToAppEnabled  -eq $true) {
-     Set-MsolCompanySettings -UsersPermissionToUserConsentToAppEnabled $false
-     Write-LogInfo 'Disable User permission consent App registration' 
-}
+     #SCRIPT
+     if ((Get-MsolCompanyInformation).UsersPermissionToUserConsentToAppEnabled -eq $true) {
+          Set-MsolCompanySettings -UsersPermissionToUserConsentToAppEnabled $false
+          Write-LogInfo 'Disable User permission consent App registration' 
+     }
 
-<# Disable User permission consent app with MSGraph - need review
-# we need to keep only the current ManagePermissionGrantsForOwnedResource.* policies
-# https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/configure-user-consent?pivots=ms-powershell#disable-user-consent
-$currentPolicies = (Get-MgBetaPolicyAuthorizationPolicy).PermissionGrantPolicyIdsAssignedToDefaultUserRole
+     <# Disable User permission consent app with MSGraph - need review
+     # we need to keep only the current ManagePermissionGrantsForOwnedResource.* policies
+     # https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/configure-user-consent?pivots=ms-powershell#disable-user-consent
+     $currentPolicies = (Get-MgBetaPolicyAuthorizationPolicy).PermissionGrantPolicyIdsAssignedToDefaultUserRole
 
-$policyPrefixToKeep = "ManagePermissionGrantsForOwnedResource."
+     $policyPrefixToKeep = "ManagePermissionGrantsForOwnedResource."
 
-$userConsentPolicy = 'ManagePermissionGrantsForSelf.microsoft-user-default-legacy'
-$currentPolicies = (Get-MgBetaPolicyAuthorizationPolicy).PermissionGrantPolicyIdsAssignedToDefaultUserRole
+     $userConsentPolicy = 'ManagePermissionGrantsForSelf.microsoft-user-default-legacy'
+     $currentPolicies = (Get-MgBetaPolicyAuthorizationPolicy).PermissionGrantPolicyIdsAssignedToDefaultUserRole
 
-# Cast to array
-$newPolicies = @($currentPolicies | Where-Object { $_ -notlike "$userConsentPolicy" })
+     # Cast to array
+     $newPolicies = @($currentPolicies | Where-Object { $_ -notlike "$userConsentPolicy" })
 
-if($null -eq $newPolicies){
-	$body = @{permissionGrantPolicyIdsAssignedToDefaultUserRole=""}
-}
-else {
-	$body = @{
-		"permissionGrantPolicyIdsAssignedToDefaultUserRole" = $newPolicies
-	}
+     if($null -eq $newPolicies){
+          $body = @{permissionGrantPolicyIdsAssignedToDefaultUserRole=""}
+     }
+     else {
+          $body = @{
+               "permissionGrantPolicyIdsAssignedToDefaultUserRole" = $newPolicies
+          }
+     }
+
+     Update-MgBetaPolicyAuthorizationPolicy -AuthorizationPolicyId 'authorizationPolicy' -BodyParameter $body
+     #>
 }
 
 function Start-UserTenantCreation {
-
-Update-MgBetaPolicyAuthorizationPolicy -AuthorizationPolicyId 'authorizationPolicy' -BodyParameter $body
-#>
-
-
      # Remove AllowedToCreateTenants permission - need review
      <#
      if((Get-MgPolicyAuthorizationPolicy).DefaultUserRolePermissions.AllowedToCreateTenants){
