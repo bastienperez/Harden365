@@ -47,7 +47,7 @@ else { Write-LogInfo "Modern Auth in Teams enabled"}
 #>
 
 Function Start-TeamsAutoAdmitUsers {
-     <#
+    <#
         .Synopsis
          Only invited users should be automatically admitted to Teams meetings
         
@@ -59,17 +59,18 @@ Function Start-TeamsAutoAdmitUsers {
          
     #>
 
-Write-LogSection 'MICROSOFT TEAMS' -NoHostOutput
+    Write-LogSection 'MICROSOFT TEAMS' -NoHostOutput
 
-#SCRIPT
-if ((Get-CsTeamsMeetingPolicy -Identity Global).AutoAdmittedUsers -ne 'InvitedUsers') {
-Set-CsTeamsMeetingPolicy -Identity Global -AutoAdmittedUsers InvitedUsers
-Write-LogInfo "AutoAdmittedUsers change at InvitedUsers" 
-} else { Write-LogInfo "AutoAdmittedUsers configured for InvitedUsers"}     
+    #SCRIPT
+    if ((Get-CsTeamsMeetingPolicy -Identity Global).AutoAdmittedUsers -ne 'InvitedUsers') {
+        Set-CsTeamsMeetingPolicy -Identity Global -AutoAdmittedUsers InvitedUsers
+        Write-LogInfo "AutoAdmittedUsers change at InvitedUsers" 
+    }
+    else { Write-LogInfo "AutoAdmittedUsers configured for InvitedUsers" }     
 }
 
 Function Start-TeamsBlockAnonymousJoin {
-     <#
+    <#
         .Synopsis
          Restrict Anonymous to join meeting
         
@@ -81,16 +82,17 @@ Function Start-TeamsBlockAnonymousJoin {
          
     #>
 
-#SCRIPT
-if ((Get-CsTeamsMeetingPolicy -Identity Global).AllowAnonymousUsersToJoinMeeting  -eq $true) {
-Set-CsTeamsMeetingPolicy -Identity Global -AllowAnonymousUsersToJoinMeeting $false
-Write-LogInfo 'Block Anonymous Users To Join Meeting' 
-} else { Write-LogInfo "Anonymous Users already disabled To Join Meeting"}
+    #SCRIPT
+    if ((Get-CsTeamsMeetingPolicy -Identity Global).AllowAnonymousUsersToJoinMeeting -eq $true) {
+        Set-CsTeamsMeetingPolicy -Identity Global -AllowAnonymousUsersToJoinMeeting $false
+        Write-LogInfo 'Block Anonymous Users To Join Meeting' 
+    }
+    else { Write-LogInfo "Anonymous Users already disabled To Join Meeting" }
       
 }
 
 Function Start-TeamsBlockStorageCloudServices {
-     <#
+    <#
         .Synopsis
          Block file sharing for other cloud storage services
         
@@ -102,47 +104,52 @@ Function Start-TeamsBlockStorageCloudServices {
          
     #>
 
-	param(
-	[Parameter(Mandatory = $false)]
-	[Boolean]$DropBox = $false,
-    [Boolean]$Box = $false,
-    [Boolean]$GoogleDrive = $false,
-    [Boolean]$ShareFile = $false,
-    [Boolean]$Egnyte = $false
-)
+    param(
+        [Parameter(Mandatory = $false)]
+        [Boolean]$DropBox = $false,
+        [Boolean]$Box = $false,
+        [Boolean]$GoogleDrive = $false,
+        [Boolean]$ShareFile = $false,
+        [Boolean]$Egnyte = $false
+    )
 
 
-#SCRIPT
-if (($DropBox -eq $false) -and (Get-CsTeamsClientConfiguration).AllowDropBox -eq $true) { 
-    Write-LogWarning "DropBox allowed in Teams !"
-    Set-CsTeamsClientConfiguration -AllowDropBox $DropBox
-    Write-LogInfo "DropBox disabled in Teams !"
-    } else { Write-LogInfo "DropBox already disabled in Teams"}
-if (($Box -eq $false) -and (Get-CsTeamsClientConfiguration).AllowBox -eq $true) { 
-    Write-LogWarning "Box allowed in Teams !"
-    Set-CsTeamsClientConfiguration -AllowBox $Box
-    Write-LogInfo "Box disabled in Teams !"
-    } else { Write-LogInfo "Box already disabled in Teams"}
-if (($GoogleDrive -eq $false) -and (Get-CsTeamsClientConfiguration).AllowGoogleDrive -eq $true) { 
-    Write-LogWarning "GoogleDrive allowed in Teams !"
-    Set-CsTeamsClientConfiguration -AllowGoogleDrive $GoogleDrive
-    Write-LogInfo "GoogleDrive disabled in Teams !"
-    } else { Write-LogInfo "GoogleDrive already disabled in Teams"}
-if (($ShareFile -eq $false) -and (Get-CsTeamsClientConfiguration).AllowShareFile -eq $true) { 
-    Write-LogWarning "ShareFile allowed in Teams !"
-    Set-CsTeamsClientConfiguration -AllowShareFile $ShareFile
-    Write-LogInfo "ShareFile disabled in Teams !"
-    } else { Write-LogInfo "Sharefile already disabled in Teams"}
-if (($Egnyte -eq $false) -and (Get-CsTeamsClientConfiguration).AllowEgnyte -eq $true) { 
-    Write-LogWarning "Egnyte allowed in Teams !"
-    Set-CsTeamsClientConfiguration -AllowEgnyte $Egnyte
-    Write-LogInfo "Egnyte disabled in Teams !"
-    } else { Write-LogInfo "Egnyte already disabled in Teams"}
+    #SCRIPT
+    if (($DropBox -eq $false) -and (Get-CsTeamsClientConfiguration).AllowDropBox -eq $true) { 
+        Write-LogWarning "DropBox allowed in Teams !"
+        Set-CsTeamsClientConfiguration -AllowDropBox $DropBox
+        Write-LogInfo "DropBox disabled in Teams !"
+    }
+    else { Write-LogInfo "DropBox already disabled in Teams" }
+    if (($Box -eq $false) -and (Get-CsTeamsClientConfiguration).AllowBox -eq $true) { 
+        Write-LogWarning "Box allowed in Teams !"
+        Set-CsTeamsClientConfiguration -AllowBox $Box
+        Write-LogInfo "Box disabled in Teams !"
+    }
+    else { Write-LogInfo "Box already disabled in Teams" }
+    if (($GoogleDrive -eq $false) -and (Get-CsTeamsClientConfiguration).AllowGoogleDrive -eq $true) { 
+        Write-LogWarning "GoogleDrive allowed in Teams !"
+        Set-CsTeamsClientConfiguration -AllowGoogleDrive $GoogleDrive
+        Write-LogInfo "GoogleDrive disabled in Teams !"
+    }
+    else { Write-LogInfo "GoogleDrive already disabled in Teams" }
+    if (($ShareFile -eq $false) -and (Get-CsTeamsClientConfiguration).AllowShareFile -eq $true) { 
+        Write-LogWarning "ShareFile allowed in Teams !"
+        Set-CsTeamsClientConfiguration -AllowShareFile $ShareFile
+        Write-LogInfo "ShareFile disabled in Teams !"
+    }
+    else { Write-LogInfo "Sharefile already disabled in Teams" }
+    if (($Egnyte -eq $false) -and (Get-CsTeamsClientConfiguration).AllowEgnyte -eq $true) { 
+        Write-LogWarning "Egnyte allowed in Teams !"
+        Set-CsTeamsClientConfiguration -AllowEgnyte $Egnyte
+        Write-LogInfo "Egnyte disabled in Teams !"
+    }
+    else { Write-LogInfo "Egnyte already disabled in Teams" }
      
 }
 
 Function Start-TeamsPresentMeet {
-     <#
+    <#
         .Synopsis
          Configure which users are allowed to present in Teams meetings
         
@@ -154,18 +161,17 @@ Function Start-TeamsPresentMeet {
          
     #>
 
-
-
-#SCRIPT
-if ((Get-CsTeamsMeetingPolicy -Identity Global).DesignatedPresenterRoleMode -ne 'OrganizerOnlyUserOverride') {
-Set-CsTeamsMeetingPolicy -Identity Global -DesignatedPresenterRoleMode OrganizerOnlyUserOverride
-Write-LogInfo "DesignatedPresentaterRoleMode change at OrganizerOnlyUserOverride" 
-} else { Write-LogInfo "DesignatedPresentaterRoleMode already set at OrganizerOnlyUserOverride"}
-Write-LogSection '' -NoHostOutput         
+    #SCRIPT
+    if ((Get-CsTeamsMeetingPolicy -Identity Global).DesignatedPresenterRoleMode -ne 'OrganizerOnlyUserOverride') {
+        Set-CsTeamsMeetingPolicy -Identity Global -DesignatedPresenterRoleMode OrganizerOnlyUserOverride
+        Write-LogInfo "DesignatedPresentaterRoleMode change at OrganizerOnlyUserOverride" 
+    }
+    else { Write-LogInfo "DesignatedPresentaterRoleMode already set at OrganizerOnlyUserOverride" }
+    Write-LogSection '' -NoHostOutput         
 }
 
 Function Start-TeamsExternalControl {
-     <#
+    <#
         .Synopsis
          Configure which users are allowed to present in Teams meetings
         
@@ -177,13 +183,11 @@ Function Start-TeamsExternalControl {
          
     #>
 
-
-
-#SCRIPT
-if ((Get-CsTeamsMeetingPolicy -Identity Global).AllowExternalParticipantGiveRequestControl -ne $false) {
-Set-CsTeamsMeetingPolicy -Identity Global -AllowExternalParticipantGiveRequestControl $false
-Write-LogInfo "AllowExternalParticipantGiveRequestControl disabled" 
-} else { Write-LogInfo "AllowExternalParticipantGiveRequestControl already disabled"}
-Write-LogSection '' -NoHostOutput         
+    #SCRIPT
+    if ((Get-CsTeamsMeetingPolicy -Identity Global).AllowExternalParticipantGiveRequestControl -ne $false) {
+        Set-CsTeamsMeetingPolicy -Identity Global -AllowExternalParticipantGiveRequestControl $false
+        Write-LogInfo "AllowExternalParticipantGiveRequestControl disabled" 
+    }
+    else { Write-LogInfo "AllowExternalParticipantGiveRequestControl already disabled" }
+    Write-LogSection '' -NoHostOutput         
 }
-

@@ -19,7 +19,7 @@
 #>
 
 Function Start-OUTAudit {
-     <#
+    <#
         .Synopsis
          Audit Outlook Application
         
@@ -31,54 +31,63 @@ Function Start-OUTAudit {
          
     #>
 
-Write-LogInfo "**** AUDIT APPLICATION OUTLOOK"
+    Write-LogInfo "**** AUDIT APPLICATION OUTLOOK"
 
-#LEGACY AUTHENTIFICATION
-try {
-if ($(Get-OrganizationConfig).OAuth2ClientProfileEnabled -eq $false) { 
-    Write-LogWarning "Modern Auth in ExchangeOnline is disable!"
+    #LEGACY AUTHENTIFICATION
+    try {
+        if ($(Get-OrganizationConfig).OAuth2ClientProfileEnabled -eq $false) { 
+            Write-LogWarning "Modern Auth in ExchangeOnline is disable!"
+        }
+        else { Write-LogInfo "Modern Auth in ExchangeOnline enabled" }    
     }
-else { Write-LogInfo "Modern Auth in ExchangeOnline enabled"}    
-} catch{ Write-LogError "Module error" }
+    catch { Write-LogError "Module error" }
  
 
-#EXTERNAL STORAGE PROVIDER
-try {
-if ($(Get-OwaMailboxPolicy).AdditionalStorageProvidersAvailable -eq $true) { 
-    Write-LogWarning "External storage Provider is available in Outlook !"
+    #EXTERNAL STORAGE PROVIDER
+    try {
+        if ($(Get-OwaMailboxPolicy).AdditionalStorageProvidersAvailable -eq $true) { 
+            Write-LogWarning "External storage Provider is available in Outlook !"
+        }
+        else {
+            Write-LogInfo "External storage Provider is disabled"
+        }
     }
-else { Write-LogInfo "External storage Provider is disabled"
-}
-} catch{ Write-LogError "Module error" }
+    catch { Write-LogError "Module error" }
 
 
-#CALENDAR SHARING
-try {
-$calendars = Get-SharingPolicy | Where-Object { ($_.Domains -like '*CalendarSharing*') -and ($_.Enabled -eq $true) }
-if (!$calendars) { Write-LogInfo 'No Policy with Calendar Sharing found' }
-    else { ForEach ($calendar in $calendars) { 
-    Write-LogWarning 'Policy with calendar sharing found' }
+    #CALENDAR SHARING
+    try {
+        $calendars = Get-SharingPolicy | Where-Object { ($_.Domains -like '*CalendarSharing*') -and ($_.Enabled -eq $true) }
+        if (!$calendars) { Write-LogInfo 'No Policy with Calendar Sharing found' }
+        else {
+            ForEach ($calendar in $calendars) { 
+                Write-LogWarning 'Policy with calendar sharing found' 
+            }
+        }
     }
-} catch{ Write-LogError "Module error" }
+    catch { Write-LogError "Module error" }
 
-#OUTLOOK ADD INS
-try{
-$OutAddins= (Get-EXOMailbox | Select-Object -Unique RoleAssignmentPolicy | ForEach-Object { 
-    Get-RoleAssignmentPolicy -Identity $_.RoleAssignmentPolicy | Where-Object {
-        ($_.AssignedRoles -like "*Apps*") -and ($_.IsDefault -eq $true)}} | Select-Object Identity, @{Name="AssignedRoles"; Expression={Get-Mailbox | Select-Object -Unique RoleAssignmentPolicy | ForEach-Object {
-            Get-RoleAssignmentPolicy -Identity $_.RoleAssignmentPolicy | Select-Object -ExpandProperty AssignedRoles | Where-Object {$_ -like "*Apps*"}}}})
+    #OUTLOOK ADD INS
+    try {
+        $OutAddins = (Get-EXOMailbox | Select-Object -Unique RoleAssignmentPolicy | ForEach-Object { 
+                Get-RoleAssignmentPolicy -Identity $_.RoleAssignmentPolicy | Where-Object {
+        ($_.AssignedRoles -like "*Apps*") -and ($_.IsDefault -eq $true) } } | Select-Object Identity, @{Name = "AssignedRoles"; Expression = { Get-Mailbox | Select-Object -Unique RoleAssignmentPolicy | ForEach-Object {
+                        Get-RoleAssignmentPolicy -Identity $_.RoleAssignmentPolicy | Select-Object -ExpandProperty AssignedRoles | Where-Object { $_ -like "*Apps*" } } }
+            })
 
-if (!$OutAddins) { 
-    Write-LogInfo "Outlook AddIns disable for self activation"
+        if (!$OutAddins) { 
+            Write-LogInfo "Outlook AddIns disable for self activation"
+        }
+        else {
+            Write-LogWarning "Outlook AddIns is self activation enabled !"
+        }
     }
-else { Write-LogWarning "Outlook AddIns is self activation enabled !"
-}
-} catch{ Write-LogError "Module error" }
-Write-LogSection '' -NoHostOutput      
+    catch { Write-LogError "Module error" }
+    Write-LogSection '' -NoHostOutput      
 }
 
 Function Start-OUTCheckAddIns {
-     <#
+    <#
         .Synopsis
          Check Outlook AddIns for each user
         
@@ -90,20 +99,20 @@ Function Start-OUTCheckAddIns {
          
     #>
 
-Write-LogSection 'OUTLOOK' -NoHostOutput
+    Write-LogSection 'OUTLOOK' -NoHostOutput
 
-#SCRIPT
-$DomainOnM365 = (Get-MgDomain | Where-Object { $_.IsDefault -eq $true }).Id
+    #SCRIPT
+    $DomainOnM365 = (Get-MgDomain | Where-Object { $_.IsDefault -eq $true }).Id
 
-$dateFileString = Get-Date -Format "FileDateTimeUniversal"
-    Get-Mailbox -ResultSize Unlimited | where-object {$_.RecipientTypeDetails -ne 'DiscoveryMailbox'} | ForEach-Object {
-        (Get-App -Mailbox $_.PrimarySMTPAddress  | where-object {($_.Type -eq 'MarketPlace') -and ($_.Enabled -eq $true)} | Select-Object MailboxOwnerId,DisplayName,Appversion)
+    $dateFileString = Get-Date -Format "FileDateTimeUniversal"
+    Get-Mailbox -ResultSize Unlimited | where-object { $_.RecipientTypeDetails -ne 'DiscoveryMailbox' } | ForEach-Object {
+        (Get-App -Mailbox $_.PrimarySMTPAddress  | where-object { ($_.Type -eq 'MarketPlace') -and ($_.Enabled -eq $true) } | Select-Object MailboxOwnerId, DisplayName, Appversion)
     } | Export-Csv -Path ".\$DomainOnM365\AuditOutlookAddIns$dateFileString.csv" -Delimiter ';' -Encoding UTF8 -NoTypeInformation 
-Write-LogInfo "Audit Outlook AddIns generated in folder .\$DomainOnM365"      
+    Write-LogInfo "Audit Outlook AddIns generated in folder .\$DomainOnM365"      
 }
 
 Function Start-TEAAudit {
-     <#
+    <#
         .Synopsis
          Audit Teams Application
         
@@ -115,72 +124,76 @@ Function Start-TEAAudit {
          
     #>
 
-Write-LogInfo "**** AUDIT APPLICATION TEAMS"
-try { 
-    $null = Get-CsTenant -Erroraction Stop
-             } catch { $null = Connect-MicrosoftTeams -Erroraction silentlyContinue}
+    Write-LogInfo "**** AUDIT APPLICATION TEAMS"
+    try { 
+        $null = Get-CsTenant -Erroraction Stop
+    }
+    catch { $null = Connect-MicrosoftTeams -Erroraction silentlyContinue }
 
-<#LEGACY AUTHENTIFICATION
+    <#LEGACY AUTHENTIFICATION
 if ($(Get-CsOAuthConfiguration).ClientAdalAuthOverride -eq "Disallowed") { 
     Write-LogWarning "Modern Auth in Teams is disable!"
     }
 else { Write-LogInfo "Modern Auth in Teams enabled"}
 #>
 
-#PRESENTER-ROLE
-if ((Get-CsTeamsMeetingPolicy -Identity Global).DesignatedPresenterRoleMode -ne 'OrganizerOnlyUserOverride') {
-    Write-LogWarning "Meeting Presenter role setting not correct" 
+    #PRESENTER-ROLE
+    if ((Get-CsTeamsMeetingPolicy -Identity Global).DesignatedPresenterRoleMode -ne 'OrganizerOnlyUserOverride') {
+        Write-LogWarning "Meeting Presenter role setting not correct" 
     }
-else { Write-LogInfo "Meeting Presenter role setting is correct"}    
+    else { Write-LogInfo "Meeting Presenter role setting is correct" }    
 
-#AUTOADMITTEDUSERS
-if ((Get-CsTeamsMeetingPolicy -Identity Global).AutoAdmittedUsers -ne 'InvitedUsers') {
-Write-LogWarning "AutoAdmitted setting is not correct" 
-} 
-else { Write-LogInfo "AutoAdmitted setting is correct"} 
+    #AUTOADMITTEDUSERS
+    if ((Get-CsTeamsMeetingPolicy -Identity Global).AutoAdmittedUsers -ne 'InvitedUsers') {
+        Write-LogWarning "AutoAdmitted setting is not correct" 
+    } 
+    else { Write-LogInfo "AutoAdmitted setting is correct" } 
 
-#ANONYMOUSJOINMEETING
-if ((Get-CsTeamsMeetingPolicy -Identity Global).AllowAnonymousUsersToJoinMeeting  -eq $true) {
-Write-LogWarning 'Anonymous Users allowed to Join Meeting !' 
-}
-else { Write-LogInfo "Anonymous Users disallowed to Join Meeting"
-}
+    #ANONYMOUSJOINMEETING
+    if ((Get-CsTeamsMeetingPolicy -Identity Global).AllowAnonymousUsersToJoinMeeting -eq $true) {
+        Write-LogWarning 'Anonymous Users allowed to Join Meeting !' 
+    }
+    else {
+        Write-LogInfo "Anonymous Users disallowed to Join Meeting"
+    }
 
-#EXTERNAL CONTROL
-if ((Get-CsTeamsMeetingPolicy -Identity Global).AllowExternalParticipantGiveRequestControl -ne $false) {
-Write-LogWarning "AllowExternalParticipantGiveRequestControl enabled !" 
-} else { Write-LogInfo "AllowExternalParticipantGiveRequestControl disabled"}
-Write-LogSection '' -NoHostOutput   
+    #EXTERNAL CONTROL
+    if ((Get-CsTeamsMeetingPolicy -Identity Global).AllowExternalParticipantGiveRequestControl -ne $false) {
+        Write-LogWarning "AllowExternalParticipantGiveRequestControl enabled !" 
+    }
+    else { Write-LogInfo "AllowExternalParticipantGiveRequestControl disabled" }
+    Write-LogSection '' -NoHostOutput   
 
 
-#EXTERNAL STORAGE PROVIDER
-try {
-if ((Get-CsTeamsClientConfiguration).AllowDropBox -eq $true) { 
-    Write-LogWarning "DropBox allowed in Teams !"
+    #EXTERNAL STORAGE PROVIDER
+    try {
+        if ((Get-CsTeamsClientConfiguration).AllowDropBox -eq $true) { 
+            Write-LogWarning "DropBox allowed in Teams !"
+        }
+        else { Write-LogInfo "DropBox disabled in Teams" }
+        if ((Get-CsTeamsClientConfiguration).AllowBox -eq $true) { 
+            Write-LogWarning "Box allowed in Teams !"
+        }
+        else { Write-LogInfo "Box disabled in Teams" }
+        if ((Get-CsTeamsClientConfiguration).AllowGoogleDrive -eq $true) { 
+            Write-LogWarning "GoogleDrive allowed in Teams !"
+        }
+        else { Write-LogInfo "GoogleDrive disabled in Teams" }
+        if ((Get-CsTeamsClientConfiguration).AllowShareFile -eq $true) { 
+            Write-LogWarning "ShareFile allowed in Teams !"
+        }
+        else { Write-LogInfo "ShareFile disabled in Teams" }
+        if ((Get-CsTeamsClientConfiguration).AllowEgnyte -eq $true) { 
+            Write-LogWarning "Egnyte allowed in Teams !"
+        }
+        else { Write-LogInfo "Egnyte disabled in Teams" }
     }
-    else {Write-LogInfo "DropBox disabled in Teams"}
-if ((Get-CsTeamsClientConfiguration).AllowBox -eq $true) { 
-    Write-LogWarning "Box allowed in Teams !"
-    }
-    else {Write-LogInfo "Box disabled in Teams"}
-if ((Get-CsTeamsClientConfiguration).AllowGoogleDrive -eq $true) { 
-    Write-LogWarning "GoogleDrive allowed in Teams !"
-    }
-    else {Write-LogInfo "GoogleDrive disabled in Teams"}
-if ((Get-CsTeamsClientConfiguration).AllowShareFile -eq $true) { 
-    Write-LogWarning "ShareFile allowed in Teams !"
-    }
-    else {Write-LogInfo "ShareFile disabled in Teams"}
-if ((Get-CsTeamsClientConfiguration).AllowEgnyte -eq $true) { 
-    Write-LogWarning "Egnyte allowed in Teams !"
-    }
-    else {Write-LogInfo "Egnyte disabled in Teams"}
-}catch{}
-Write-LogSection '' -NoHostOutput
+    catch {}
+    Write-LogSection '' -NoHostOutput
 }
 
 Function Start-POWAudit {
-     <#
+    <#
         .Synopsis
          Audit PowerPlatform Application
         
@@ -197,17 +210,19 @@ Function Start-POWAudit {
         #$password = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($Credential.Password))
     )
 
-Write-LogInfo "**** AUDIT APPLICATION POWERPLATFORM"
+    Write-LogInfo "**** AUDIT APPLICATION POWERPLATFORM"
 
 
-#BLOCKFREESUBSCRIPTION
-try {
-if ((Get-MsolCompanyInformation).AllowAdHocSubscriptions -eq $true) {
-    Write-LogWarning "Standard users enabled to creating free subscriptions"}
-else {Write-LogInfo "Standard users already disabled to create free subscriptions"}
-} catch{ Write-LogError "Module error BLOCKFREESUBSCRIPTION" }
+    #BLOCKFREESUBSCRIPTION
+    try {
+        if ((Get-MsolCompanyInformation).AllowAdHocSubscriptions -eq $true) {
+            Write-LogWarning "Standard users enabled to creating free subscriptions"
+        }
+        else { Write-LogInfo "Standard users already disabled to create free subscriptions" }
+    }
+    catch { Write-LogError "Module error BLOCKFREESUBSCRIPTION" }
 
-<#SHAREEVERYONE
+    <#SHAREEVERYONE
 try {
 Add-PowerAppsAccount -Username $Credential.UserName -Password $Credential.Password
 if ((Get-TenantSettings).powerPlatform.powerApps.disableShareWithEveryone -eq $false) {
@@ -224,22 +239,23 @@ else {Write-LogInfo "Standard users already disabled to create trial/developer s
 } catch{ Write-LogError "Module error" }
 #>
 
-#BLOCKPAYABLESUBSCRIPTION
-try {Get-MSCommerceProductPolicies -PolicyId AllowSelfServicePurchase -ErrorAction Stop}
-catch {
-    $null = Connect-MSCommerce
+    #BLOCKPAYABLESUBSCRIPTION
+    try { Get-MSCommerceProductPolicies -PolicyId AllowSelfServicePurchase -ErrorAction Stop }
+    catch {
+        $null = Connect-MSCommerce
     }
 
-$Products = Get-MSCommerceProductPolicies -PolicyId AllowSelfServicePurchase
+    $Products = Get-MSCommerceProductPolicies -PolicyId AllowSelfServicePurchase
 
 
-ForEach ($Product in $Products) {
+    ForEach ($Product in $Products) {
         $productName = $Product.ProductName
-    if ($Product.PolicyValue -eq "Enabled") {
-        Write-LogWarning "Prevent standard users from creating $ProductName payable subscriptions"}
-    else {Write-LogInfo "Standard users already disabled to subscribe $ProductName payable subscriptions"}
+        if ($Product.PolicyValue -eq "Enabled") {
+            Write-LogWarning "Prevent standard users from creating $ProductName payable subscriptions"
+        }
+        else { Write-LogInfo "Standard users already disabled to subscribe $ProductName payable subscriptions" }
     }
-# catch{ Write-LogError "Module error BLOCKPAYABLESUBSCRIPTION" }
-Write-LogSection '' -NoHostOutput
+    # catch{ Write-LogError "Module error BLOCKPAYABLESUBSCRIPTION" }
+    Write-LogSection '' -NoHostOutput
 }
 

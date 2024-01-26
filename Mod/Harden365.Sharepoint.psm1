@@ -19,10 +19,8 @@
         SSPR
 #>
 
-
-
 Function Start-LegacyAuthSPO {
-     <#
+    <#
         .Synopsis
          Disable User permission consent App registration
         
@@ -34,16 +32,13 @@ Function Start-LegacyAuthSPO {
          
     #>
 
-Write-LogSection 'HARDENING SHAREPOINT' -NoHostOutput
+    Write-LogSection 'HARDENING SHAREPOINT' -NoHostOutput
 
-#SCRIPT
-
-if ($(Get-SPOTenant).LegacyAuthProtocolsEnabled -eq $true) { 
-    Write-LogWarning "Legacy Auth in SharepointOnline is enable!"
-    Set-SPOTenant -LegacyAuthProtocolsEnabled $false
-    Write-LogInfo "legacy Auth in Sharepoint set to disable"
+    #SCRIPT
+    if ($(Get-SPOTenant).LegacyAuthProtocolsEnabled -eq $true) { 
+        Write-LogWarning "Legacy Auth in SharepointOnline is enable!"
+        Set-SPOTenant -LegacyAuthProtocolsEnabled $false
+        Write-LogInfo "legacy Auth in Sharepoint set to disable"
     }
-else { Write-LogInfo "Legacy Auth in SharepointOnline disabled"}
-
-
+    else { Write-LogInfo "Legacy Auth in SharepointOnline disabled" }
 }

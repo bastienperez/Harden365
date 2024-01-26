@@ -36,7 +36,8 @@ function Update-ProgressionBarOuterLoop {
     )
     if ($OperationCount -eq $OperationTotal) {
         Write-Progress -Activity $Activity -Status "$Status : Complete" -Complete
-    } else {
+    }
+    else {
         $perventageComplete = [math]::Round( ($OperationCount * 100) / $OperationTotal, 3)
         Write-Progress -Activity $Activity -Status "$Status : $perventageComplete%" -PercentComplete $perventageComplete 
     }
@@ -52,7 +53,8 @@ function Update-ProgressionBarInnerLoop {
 
     if ($OperationCount -eq $OperationTotal) {
         Write-Progress -Id 1 -Activity $Activity -Status "$Status : Complete" -Complete
-    } else {
+    }
+    else {
         $perventageComplete = [math]::Round( ($OperationCount * 100) / $OperationTotal, 3)
         Write-Progress -Id 1 -Activity $Activity -Status "$Status : $perventageComplete%" -PercentComplete $perventageComplete 
     }
@@ -114,6 +116,6 @@ function Write-LogInternal {
         [String]$Text,
         [Parameter(Mandatory = $true)]
         [String]$InfoType
-        )
+    )
     "$(Get-Date -UFormat "%m-%d-%Y %T ") $InfoType $Text" | Out-File "$debugFileFullPath" -Append
 }

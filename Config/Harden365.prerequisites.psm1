@@ -48,7 +48,7 @@ function Test-UserIsAdministrator {
     if (!$isAdmin) {
         Write-LogError 'You must run this script as an administrator to update or install powershell module'
         Write-LogError 'Script execution cancelled'
-        Pause;Break
+        Pause; Break
     }
 }
 
@@ -64,7 +64,7 @@ function Test-PowerShellModule {
 
     $installedPSModule = Get-InstalledModule $ModuleName -ErrorAction Ignore
     $installedPSModuleVersion = Get-InstalledModule $ModuleName -MinimumVersion $ModuleVersion -ErrorAction Ignore
-    if($null -eq $installedPSModule){
+    if ($null -eq $installedPSModule) {
         Write-LogWarning "$ModuleName Powershell Module necessary"
         Test-UserIsAdministrator
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -72,7 +72,8 @@ function Test-PowerShellModule {
         Write-LogInfo ("Installing $ModuleName Powershell Module")
         Install-Module $ModuleName -AllowClobber
         Set-PSRepository -Name 'PSGallery' -InstallationPolicy Untrusted
-    } elseif ($null -eq $installedPSModuleVersion) {
+    }
+    elseif ($null -eq $installedPSModuleVersion) {
         Write-LogInfo ("Updating $ModuleName Powershell Module")
         Test-UserIsAdministrator
         Pause

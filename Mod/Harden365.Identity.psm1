@@ -31,8 +31,8 @@
      # Cast to array
      $newPolicies = @($currentPolicies | Where-Object { $_ -notlike "$userConsentPolicy" })
 
-     if($null -eq $newPolicies){
-          $body = @{permissionGrantPolicyIdsAssignedToDefaultUserRole=""}
+     if ($null -eq $newPolicies) {
+          $body = @{permissionGrantPolicyIdsAssignedToDefaultUserRole = "" }
      }
      else {
           $body = @{
@@ -44,7 +44,8 @@
 }
 
 function Start-UserTenantCreation {
-     # Remove AllowedToCreateTenants permission - need review
+     # Remove AllowedToCreateTenants permission 
+     # TODO: need review
      <#
      if((Get-MgPolicyAuthorizationPolicy).DefaultUserRolePermissions.AllowedToCreateTenants){
           Update-MgPolicyAuthorizationPolicy -DefaultUserRolePermissions @{AllowedToCreateTenants = $false}

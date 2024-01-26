@@ -24,7 +24,7 @@
 
 
 Function Start-OUTAuthActivation {
-     <#
+    <#
         .Synopsis
          Enable OAuth in ExchangeOnline
         
@@ -36,15 +36,15 @@ Function Start-OUTAuthActivation {
          
     #>
 
-Write-LogSection 'HARDENING OUTLOOK' -NoHostOutput
+    Write-LogSection 'HARDENING OUTLOOK' -NoHostOutput
 
-#SCRIPT
-if ($(Get-OrganizationConfig).OAuth2ClientProfileEnabled -eq $false) { 
-    Write-LogWarning "Modern Auth in ExchangeOnline is disable!"
-    Set-OrganizationConfig -OAuth2ClientProfileEnabled $true
-    Write-LogInfo "Modern Auth in ExchangeOnline set to enable"
+    #SCRIPT
+    if ($(Get-OrganizationConfig).OAuth2ClientProfileEnabled -eq $false) { 
+        Write-LogWarning "Modern Auth in ExchangeOnline is disable!"
+        Set-OrganizationConfig -OAuth2ClientProfileEnabled $true
+        Write-LogInfo "Modern Auth in ExchangeOnline set to enable"
     }
-else { Write-LogInfo "Modern Auth in ExchangeOnline enabled"}    
+    else { Write-LogInfo "Modern Auth in ExchangeOnline enabled" }    
 }
 
 <#
@@ -88,7 +88,7 @@ else {
 #>
 
 Function Start-OUTBlockStorageTiers {
-     <#
+    <#
         .Synopsis
          Block External storage providers available in Outlook on the Web
         
@@ -102,21 +102,20 @@ Function Start-OUTBlockStorageTiers {
 
 
 
-#SCRIPT
-if ($(Get-OwaMailboxPolicy).AdditionalStorageProvidersAvailable -eq $true) { 
-    Write-LogWarning "External stagorage Provider is available in Outlook !"
-    Set-OwaMailboxPolicy -Identity OwaMailboxPolicy-Default -AdditionalStorageProvidersAvailable $false
-    Write-LogInfo "External storage Provider is disabled"
+    #SCRIPT
+    if ($(Get-OwaMailboxPolicy).AdditionalStorageProvidersAvailable -eq $true) { 
+        Write-LogWarning "External stagorage Provider is available in Outlook !"
+        Set-OwaMailboxPolicy -Identity OwaMailboxPolicy-Default -AdditionalStorageProvidersAvailable $false
+        Write-LogInfo "External storage Provider is disabled"
     }
-else { Write-LogInfo "External storage Provider is disabled"
+    else {
+        Write-LogInfo "External storage Provider is disabled"
+    }
+    Write-LogSection '' -NoHostOutput    
 }
-Write-LogSection '' -NoHostOutput    
-}
-
-
 
 Function Start-OUTCalendarSharing {
-     <#
+    <#
         .Synopsis
          Prevent share details calendar
         
@@ -128,23 +127,24 @@ Function Start-OUTCalendarSharing {
          
     #>
 
-#SCRIPT
-try {
-if (Get-SharingPolicy | Where-Object { ($_.Domains -like '*CalendarSharing*') -and ($_.Enabled -eq $true) }) { 
-    Get-SharingPolicy | Where-Object { ($_.Domains -like '*CalendarSharing*') -and ($_.Enabled -eq $true) } |
-    ForEach-Object {
-    Write-LogWarning 'Policy with calendar sharing found'
-    Set-SharingPolicy -Identity $_.Name -Enabled $false
-    Write-LogInfo 'Policy with Calendar Sharing disabled' }
+    #SCRIPT
+    try {
+        if (Get-SharingPolicy | Where-Object { ($_.Domains -like '*CalendarSharing*') -and ($_.Enabled -eq $true) }) { 
+            Get-SharingPolicy | Where-Object { ($_.Domains -like '*CalendarSharing*') -and ($_.Enabled -eq $true) } |
+            ForEach-Object {
+                Write-LogWarning 'Policy with calendar sharing found'
+                Set-SharingPolicy -Identity $_.Name -Enabled $false
+                Write-LogInfo 'Policy with Calendar Sharing disabled' }
+        }
+        else { Write-LogInfo 'Policy with Calendar Sharing not found' }
     }
-    else { Write-LogInfo 'Policy with Calendar Sharing not found' }
-} catch{ Write-LogError "Module error" }
+    catch { Write-LogError "Module error" }
       
 }
 
 
 Function Start-OUTExternalTag {
-     <#
+    <#
         .Synopsis
          Configure external tags to highlight emails which are sent from external.
         
@@ -156,17 +156,18 @@ Function Start-OUTExternalTag {
          
     #>
 
-#SCRIPT
-try {
-if ((Get-ExternalInOutlook).Enabled -eq '$false') { 
-    Set-ExternalInOutlook -Enabled $true
-    Write-LogInfo 'External Tag Enabled in Outlook'
+    #SCRIPT
+    try {
+        if ((Get-ExternalInOutlook).Enabled -eq '$false') { 
+            Set-ExternalInOutlook -Enabled $true
+            Write-LogInfo 'External Tag Enabled in Outlook'
+        }
+        else { 
+            Write-LogInfo 'External Tag Enabled in Outlook' 
+        }
     }
-    else { 
-    Write-LogInfo 'External Tag Enabled in Outlook' }
-} catch{ Write-LogError "Module error in Start-OUTExternalTag" } 
+    catch { Write-LogError "Module error in Start-OUTExternalTag" } 
 
-Write-LogSection '' -NoHostOutput  
+    Write-LogSection '' -NoHostOutput  
       
 }
-

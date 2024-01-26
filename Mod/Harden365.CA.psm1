@@ -22,7 +22,7 @@
 
 
 Function Start-GroupMFAUsersExclude {
-     <#
+    <#
         .Synopsis
          Create group to exclude users.
         
@@ -34,32 +34,31 @@ Function Start-GroupMFAUsersExclude {
          
     #>
 
-	param(
-	[Parameter(Mandatory = $false)]
-	[String]$Name = "Harden365 - CA Exclusion - MFA Users Exclude",
-    [String]$mailNickName = "H365-MFAUsersExclude"
-)
+    param(
+        [Parameter(Mandatory = $false)]
+        [String]$Name = "Harden365 - CA Exclusion - MFA Users Exclude",
+        [String]$mailNickName = "H365-MFAUsersExclude"
+    )
 
 
-#SCRIPT
-$GroupAAD=Get-MgGroup -Filter "DisplayName eq '$Name'"
-    if (-not $GroupAAD)
-        {
+    #SCRIPT
+    $GroupAAD = Get-MgGroup -Filter "DisplayName eq '$Name'"
+    if (-not $GroupAAD) {
         Try {
             New-MgGroup -Description "$Name" -DisplayName "$Name" -MailEnabled:$false -SecurityEnabled -MailNickName $MailNickName
             Write-LogInfo "Group '$Name' created"
-            }
-                 Catch {
-                        Write-LogError "Group '$Name' not created"
-                        }
+        }
+        Catch {
+            Write-LogError "Group '$Name' not created"
+        }
     }
     else { 
         Write-LogWarning "Group '$Name' already created!"
-          }
+    }
 }
 
 Function Start-GroupMFAGuestsExclude {
-     <#
+    <#
         .Synopsis
          Create group to exclude guests.
         
@@ -71,32 +70,31 @@ Function Start-GroupMFAGuestsExclude {
          
     #>
 
-	param(
-	[Parameter(Mandatory = $false)]
-	[String]$Name = "Harden365 - CA Exclusion - MFA Guests Exclude",
-    [String]$mailNickName = "H365-MFAGuestExclude"
-)
+    param(
+        [Parameter(Mandatory = $false)]
+        [String]$Name = "Harden365 - CA Exclusion - MFA Guests Exclude",
+        [String]$mailNickName = "H365-MFAGuestExclude"
+    )
 
 
-#SCRIPT
-$GroupAAD=Get-MgGroup -Filter "DisplayName eq '$Name'"
-    if (-not $GroupAAD)
-        {
+    #SCRIPT
+    $GroupAAD = Get-MgGroup -Filter "DisplayName eq '$Name'"
+    if (-not $GroupAAD) {
         Try {
             New-MgGroup -Description "$Name" -DisplayName "$Name" -MailEnabled:$false -SecurityEnabled -MailNickName $MailNickName
             Write-LogInfo "Group '$Name' created"
-            }
-                 Catch {
-                        Write-LogError "Group '$Name' not created"
-                        }
+        }
+        Catch {
+            Write-LogError "Group '$Name' not created"
+        }
     }
     else { 
         Write-LogWarning "Group '$Name' already created!"
-          }
+    }
 }
 
 Function Start-GroupLegacyAuthGroupExclude {
-     <#
+    <#
         .Synopsis
          Create group to legacy authentification.
         
@@ -108,32 +106,31 @@ Function Start-GroupLegacyAuthGroupExclude {
          
     #>
 
-	param(
-	[Parameter(Mandatory = $false)]
-	[String]$Name = "Harden365 - CA Exclusion - Legacy Authentification Exclude",
-    [String]$mailNickName = "H365-LegacyExclude"
-)
+    param(
+        [Parameter(Mandatory = $false)]
+        [String]$Name = "Harden365 - CA Exclusion - Legacy Authentification Exclude",
+        [String]$mailNickName = "H365-LegacyExclude"
+    )
 
 
-#SCRIPT
-$GroupAAD=Get-MgGroup -Filter "DisplayName eq '$Name'"
-    if (-not $GroupAAD)
-        {
+    #SCRIPT
+    $GroupAAD = Get-MgGroup -Filter "DisplayName eq '$Name'"
+    if (-not $GroupAAD) {
         Try {
             New-MgGroup -Description "$Name" -DisplayName "$Name" -MailEnabled:$false -SecurityEnabled -MailNickName $MailNickName
             Write-LogInfo "Group '$Name' created"
-            }
-                 Catch {
-                        Write-LogError "Group '$Name' not created"
-                        }
+        }
+        Catch {
+            Write-LogError "Group '$Name' not created"
+        }
     }
     else { 
         Write-LogWarning "Group '$Name' already created!"
-          }
+    }
 }
 
 Function Start-GroupUnsupportedDevicePlatforms {
-     <#
+    <#
         .Synopsis
          Create group to Unsupported Device Platforms.
         
@@ -145,32 +142,31 @@ Function Start-GroupUnsupportedDevicePlatforms {
          
     #>
 
-	param(
-	[Parameter(Mandatory = $false)]
-	[String]$Name = "Harden365 - CA Exclusion - Unsupported Device Platforms Exclude",
-    [String]$mailNickName = "H365-UnsupportedOSExclude"
-)
+    param(
+        [Parameter(Mandatory = $false)]
+        [String]$Name = "Harden365 - CA Exclusion - Unsupported Device Platforms Exclude",
+        [String]$mailNickName = "H365-UnsupportedOSExclude"
+    )
 
 
-#SCRIPT
-$GroupAAD=Get-MgGroup -Filter "DisplayName eq '$Name'"
-    if (-not $GroupAAD)
-        {
+    #SCRIPT
+    $GroupAAD = Get-MgGroup -Filter "DisplayName eq '$Name'"
+    if (-not $GroupAAD) {
         Try {
             New-MgGroup -Description "$Name" -DisplayName "$Name" -MailEnabled:$false -SecurityEnabled -MailNickName $MailNickName
             Write-LogInfo "Group '$Name' created"
-            }
-                 Catch {
-                        Write-LogError "Group '$Name' not created"
-                        }
+        }
+        Catch {
+            Write-LogError "Group '$Name' not created"
+        }
     }
     else { 
         Write-LogWarning "Group '$Name' already created!"
-          }
+    }
 }
 
 Function Start-LegacyAuthPolicy {
-     <#
+    <#
         .Synopsis
          Create CA to legacy authentification.
         
@@ -182,69 +178,69 @@ Function Start-LegacyAuthPolicy {
          
     #>
 
-	param(
-	[Parameter(Mandatory = $false)]
-	[String]$Name = "Harden365 - Block Legacy Authentification",
-	[String]$GroupExclude = "Harden365 - CA Exclusion - Legacy Authentification Exclude"
-)
+    param(
+        [Parameter(Mandatory = $false)]
+        [String]$Name = "Harden365 - Block Legacy Authentification",
+        [String]$GroupExclude = "Harden365 - CA Exclusion - Legacy Authentification Exclude"
+    )
 
 
-#SCRIPT
-$DomainOnM365=(Get-MgDomain | Where-Object { $_.IsInitial -eq $true }).Id
-$ExcludeCAGroup = (Get-MgGroup -All | Where-Object { $_.DisplayName -eq $GroupExclude }).Id
-$CondAccPol=Get-MgIdentityConditionalAccessPolicy -Filter "DisplayName eq '$name'"
-$idBriceGlass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.glass@$domainOnM365" }).Id
-$idBriceDouglass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.douglass@$domainOnM365" }).Id
-    if (-not $CondAccPol){
+    #SCRIPT
+    $DomainOnM365 = (Get-MgDomain | Where-Object { $_.IsInitial -eq $true }).Id
+    $ExcludeCAGroup = (Get-MgGroup -All | Where-Object { $_.DisplayName -eq $GroupExclude }).Id
+    $CondAccPol = Get-MgIdentityConditionalAccessPolicy -Filter "DisplayName eq '$name'"
+    $idBriceGlass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.glass@$domainOnM365" }).Id
+    $idBriceDouglass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.douglass@$domainOnM365" }).Id
+    if (-not $CondAccPol) {
         Try {
             $params = @{
-	                displayName = "$Name"
-	                state = "disabled"
-	                conditions = @{
-		                clientAppTypes = @(
-                            "exchangeActiveSync",
-                            "other"
-		                )
-		                applications = @{
-			                includeApplications = @(
-				            "All"
-			                )
-		                }
-		                users = @{
-                            includeUsers = @(
-				            "All"
-			                )
-                        excludeUsers = @(
-				            "$idBriceGlass"
+                displayName   = "$Name"
+                state         = "disabled"
+                conditions    = @{
+                    clientAppTypes = @(
+                        "exchangeActiveSync",
+                        "other"
+                    )
+                    applications   = @{
+                        includeApplications = @(
+                            "All"
+                        )
+                    }
+                    users          = @{
+                        includeUsers  = @(
+                            "All"
+                        )
+                        excludeUsers  = @(
+                            "$idBriceGlass"
                             "$idBriceDouglass"
-			                )
+                        )
                         excludeGroups = @(
                             "$ExcludeCAGroup"
-			                )
-		                }
-	                }
-	                grantControls = @{
-		                operator = "OR"
-		                builtInControls = @(
+                        )
+                    }
+                }
+                grantControls = @{
+                    operator        = "OR"
+                    builtInControls = @(
                         "block"
-		                )
-	                }
+                    )
+                }
             }
 
             New-MgIdentityConditionalAccessPolicy -BodyParameter $params
             Write-LogInfo "CA '$Name' created"
-            }
-                 Catch {
-                        Write-LogError "CA '$Name' not created"
-                        }
-            }
-            else { 
-                  Write-LogWarning "CA '$Name' already created"
-                  }
- }
+        }
+        Catch {
+            Write-LogError "CA '$Name' not created"
+        }
+    }
+    else { 
+        Write-LogWarning "CA '$Name' already created"
+    }
+}
 
 Function Start-MFAAdmins {
-     <#
+    <#
         .Synopsis
          Create CA to admins connection.
         
@@ -256,95 +252,95 @@ Function Start-MFAAdmins {
          
     #>
 
-	param(
-	[Parameter(Mandatory = $false)]
-	[String]$Name = "Harden365 - MFA Admins"
-)
+    param(
+        [Parameter(Mandatory = $false)]
+        [String]$Name = "Harden365 - MFA Admins"
+    )
 
 
-#SCRIPT
-$CARoles = @(
-(Get-MgDirectoryRoleTemplate | Where-Object {$_.DisplayName -eq "Global Administrator"}).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object {$_.DisplayName -eq "Global Reader"}).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object {$_.DisplayName -eq "Application Administrator"}).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object {$_.DisplayName -eq "Authentication Administrator"}).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object {$_.DisplayName -eq "Billing Administrator"}).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object {$_.DisplayName -eq "Cloud Application Administrator"}).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object {$_.DisplayName -eq "Conditional Access Administrator"}).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object {$_.DisplayName -eq "Exchange Administrator"}).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object {$_.DisplayName -eq "Helpdesk administrator"}).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object {$_.DisplayName -eq "Password administrator"}).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object {$_.DisplayName -eq "Privileged authentication administrator"}).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object {$_.DisplayName -eq "Privileged Role Administrator"}).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object {$_.DisplayName -eq "Security administrator"}).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object {$_.DisplayName -eq "SharePoint administrator"}).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object {$_.DisplayName -eq "User administrator"}).Id)
+    #SCRIPT
+    $CARoles = @(
+(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Global Administrator" }).Id,
+(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Global Reader" }).Id,
+(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Application Administrator" }).Id,
+(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Authentication Administrator" }).Id,
+(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Billing Administrator" }).Id,
+(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Cloud Application Administrator" }).Id,
+(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Conditional Access Administrator" }).Id,
+(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Exchange Administrator" }).Id,
+(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Helpdesk administrator" }).Id,
+(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Password administrator" }).Id,
+(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Privileged authentication administrator" }).Id,
+(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Privileged Role Administrator" }).Id,
+(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Security administrator" }).Id,
+(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "SharePoint administrator" }).Id,
+(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "User administrator" }).Id)
 
-$DomainOnM365=(Get-MgDomain | Where-Object { $_.IsInitial -eq $true }).Id
-$CondAccPol=Get-MgIdentityConditionalAccessPolicy -Filter "DisplayName eq '$name'"
-$idBriceGlass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.glass@$domainOnM365" }).Id
-$idBriceDouglass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.douglass@$domainOnM365" }).Id
-    if (-not $CondAccPol){
+    $DomainOnM365 = (Get-MgDomain | Where-Object { $_.IsInitial -eq $true }).Id
+    $CondAccPol = Get-MgIdentityConditionalAccessPolicy -Filter "DisplayName eq '$name'"
+    $idBriceGlass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.glass@$domainOnM365" }).Id
+    $idBriceDouglass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.douglass@$domainOnM365" }).Id
+    if (-not $CondAccPol) {
         Try {
             $params = @{
-	                displayName = "$Name"
-	                state = "disabled"
-	                conditions = @{
-		                clientAppTypes = @(
-                            "Browser"
-                            "MobileAppsAndDesktopClients"
-		                )
-		                applications = @{
-			                includeApplications = @(
-				            "All"
-			                )
-		                }
-		                users = @{
-                            includeRoles = $CARoles
-                        excludeUsers = @(
-				            "$idBriceGlass"
-                            "$idBriceDouglass"
-			                )
-		                }
-	                }
-	                grantControls = @{
-		                operator = "OR"
-		                builtInControls = @(
-                        "mfa"
+                displayName     = "$Name"
+                state           = "disabled"
+                conditions      = @{
+                    clientAppTypes = @(
+                        "Browser"
+                        "MobileAppsAndDesktopClients"
+                    )
+                    applications   = @{
+                        includeApplications = @(
+                            "All"
                         )
-	                }
-	                sessionControls = @{
-                        disableResilienceDefaults = "false"
-                        applicationEnforcedRestrictions = $null
-                        cloudAppSecurity = $null
-		                SignInFrequency = @{
-			                Value = "4"
-                            type = "hours"
-                            authenticationType = "primaryAndSecondaryAuthentication"
-                            frequencyInterval = "timeBased"
-                            isEnabled ="true"
-		                }
-		                PersistentBrowser = @{
-			                mode = "never"
-                            isEnabled = "true"
-		                }
                     }
+                    users          = @{
+                        includeRoles = $CARoles
+                        excludeUsers = @(
+                            "$idBriceGlass"
+                            "$idBriceDouglass"
+                        )
+                    }
+                }
+                grantControls   = @{
+                    operator        = "OR"
+                    builtInControls = @(
+                        "mfa"
+                    )
+                }
+                sessionControls = @{
+                    disableResilienceDefaults       = "false"
+                    applicationEnforcedRestrictions = $null
+                    cloudAppSecurity                = $null
+                    SignInFrequency                 = @{
+                        Value              = "4"
+                        type               = "hours"
+                        authenticationType = "primaryAndSecondaryAuthentication"
+                        frequencyInterval  = "timeBased"
+                        isEnabled          = "true"
+                    }
+                    PersistentBrowser               = @{
+                        mode      = "never"
+                        isEnabled = "true"
+                    }
+                }
             }
 
             New-MgIdentityConditionalAccessPolicy -BodyParameter $params
             Write-LogInfo "CA '$Name' created"
-            }
-                 Catch {
-                        Write-LogError "CA '$Name' not created"
-                        }
-            }
-            else { 
-                  Write-LogWarning "CA '$Name' already created!"
-                  }
+        }
+        Catch {
+            Write-LogError "CA '$Name' not created"
+        }
+    }
+    else { 
+        Write-LogWarning "CA '$Name' already created!"
+    }
 }
 
 Function Start-MFAUsers {
-     <#
+    <#
         .Synopsis
          Create CA to users connection.
         
@@ -356,103 +352,103 @@ Function Start-MFAUsers {
          
     #>
 
-	param(
-	[Parameter(Mandatory = $false)]
-	[String]$Name = "Harden365 - MFA Users",
-	[String]$GroupExclude = "Harden365 - CA Exclusion - MFA Users Exclude"   
-)
+    param(
+        [Parameter(Mandatory = $false)]
+        [String]$Name = "Harden365 - MFA Users",
+        [String]$GroupExclude = "Harden365 - CA Exclusion - MFA Users Exclude"   
+    )
 
 
-#SCRIPT
-$ExcludeCAGroup = (Get-MgGroup -All | Where-Object { $_.DisplayName -eq $GroupExclude }).Id
-$DomainOnM365=(Get-MgDomain | Where-Object { $_.IsInitial -eq $true }).Id
-$CondAccPol=Get-MgIdentityConditionalAccessPolicy -Filter "DisplayName eq '$name'"
-$idBriceGlass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.glass@$domainOnM365" }).Id
-$idBriceDouglass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.douglass@$domainOnM365" }).Id
-$CARoles = @(
-(Get-MgDirectoryRoleTemplate | Where-Object {$_.DisplayName -eq "Global Administrator"}).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object {$_.DisplayName -eq "Global Reader"}).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object {$_.DisplayName -eq "Application Administrator"}).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object {$_.DisplayName -eq "Authentication Administrator"}).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object {$_.DisplayName -eq "Billing Administrator"}).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object {$_.DisplayName -eq "Cloud Application Administrator"}).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object {$_.DisplayName -eq "Conditional Access Administrator"}).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object {$_.DisplayName -eq "Exchange Administrator"}).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object {$_.DisplayName -eq "Helpdesk administrator"}).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object {$_.DisplayName -eq "Password administrator"}).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object {$_.DisplayName -eq "Privileged authentication administrator"}).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object {$_.DisplayName -eq "Privileged Role Administrator"}).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object {$_.DisplayName -eq "Security administrator"}).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object {$_.DisplayName -eq "SharePoint administrator"}).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object {$_.DisplayName -eq "User administrator"}).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object {$_.DisplayName -eq "Directory synchronization accounts"}).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object {$_.DisplayName -eq "Hybrid Identity administrator"}).Id)
+    #SCRIPT
+    $ExcludeCAGroup = (Get-MgGroup -All | Where-Object { $_.DisplayName -eq $GroupExclude }).Id
+    $DomainOnM365 = (Get-MgDomain | Where-Object { $_.IsInitial -eq $true }).Id
+    $CondAccPol = Get-MgIdentityConditionalAccessPolicy -Filter "DisplayName eq '$name'"
+    $idBriceGlass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.glass@$domainOnM365" }).Id
+    $idBriceDouglass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.douglass@$domainOnM365" }).Id
+    $CARoles = @(
+(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Global Administrator" }).Id,
+(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Global Reader" }).Id,
+(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Application Administrator" }).Id,
+(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Authentication Administrator" }).Id,
+(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Billing Administrator" }).Id,
+(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Cloud Application Administrator" }).Id,
+(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Conditional Access Administrator" }).Id,
+(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Exchange Administrator" }).Id,
+(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Helpdesk administrator" }).Id,
+(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Password administrator" }).Id,
+(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Privileged authentication administrator" }).Id,
+(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Privileged Role Administrator" }).Id,
+(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Security administrator" }).Id,
+(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "SharePoint administrator" }).Id,
+(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "User administrator" }).Id,
+(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Directory synchronization accounts" }).Id,
+(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Hybrid Identity administrator" }).Id)
 
-    if (-not $CondAccPol){
+    if (-not $CondAccPol) {
         Try {
             $params = @{
-	                displayName = "$Name"
-	                state = "disabled"
-	                conditions = @{
-		                clientAppTypes = @(
-                            "Browser"
-                            "MobileAppsAndDesktopClients"
-		                )
-		                applications = @{
-			                includeApplications = @(
-				            "All"
-			                )
-		                }
-		                users = @{
-                            includeUsers = @(
-                                "All"
-                                )
-                            excludeUsers = @(
-                                "GuestsOrExternalUsers"
-				                "$idBriceGlass"
-                                "$idBriceDouglass"
-			                    )
-                            excludeGroups = @(
-                                $ExcludeCAGroup
-			                    )
-                            excludeRoles = @(
-                                $CARoles
-			                    )
-		                }
-	                }
-	                grantControls = @{
-		                operator = "OR"
-		                builtInControls = @(
-                        "mfa"
+                displayName     = "$Name"
+                state           = "disabled"
+                conditions      = @{
+                    clientAppTypes = @(
+                        "Browser"
+                        "MobileAppsAndDesktopClients"
+                    )
+                    applications   = @{
+                        includeApplications = @(
+                            "All"
                         )
-	                }
-	                sessionControls = @{
-                        disableResilienceDefaults = "false"
-                        applicationEnforcedRestrictions = $null
-                        cloudAppSecurity = $null
-		                SignInFrequency = @{
-			                Value = "7"
-                            type = "days"
-                            authenticationType = "primaryAndSecondaryAuthentication"
-                            frequencyInterval = "timeBased"
-                            isEnabled ="true"
-		                }
                     }
+                    users          = @{
+                        includeUsers  = @(
+                            "All"
+                        )
+                        excludeUsers  = @(
+                            "GuestsOrExternalUsers"
+                            "$idBriceGlass"
+                            "$idBriceDouglass"
+                        )
+                        excludeGroups = @(
+                            $ExcludeCAGroup
+                        )
+                        excludeRoles  = @(
+                            $CARoles
+                        )
+                    }
+                }
+                grantControls   = @{
+                    operator        = "OR"
+                    builtInControls = @(
+                        "mfa"
+                    )
+                }
+                sessionControls = @{
+                    disableResilienceDefaults       = "false"
+                    applicationEnforcedRestrictions = $null
+                    cloudAppSecurity                = $null
+                    SignInFrequency                 = @{
+                        Value              = "7"
+                        type               = "days"
+                        authenticationType = "primaryAndSecondaryAuthentication"
+                        frequencyInterval  = "timeBased"
+                        isEnabled          = "true"
+                    }
+                }
             }
             New-MgIdentityConditionalAccessPolicy -BodyParameter $params
             Write-LogInfo "Conditional Access '$Name' created"
-            }
-                 Catch {
-                        Write-LogError "CA '$Name' not created"
-                        }
-            }
-            else { 
-                  Write-LogWarning "CA '$Name' already created!"
-                  }
+        }
+        Catch {
+            Write-LogError "CA '$Name' not created"
+        }
+    }
+    else { 
+        Write-LogWarning "CA '$Name' already created!"
+    }
 }
 
 Function Start-MFAGuests {
-     <#
+    <#
         .Synopsis
          Create CA to users connection.
         
@@ -464,81 +460,81 @@ Function Start-MFAGuests {
          
     #>
 
-	param(
-	[Parameter(Mandatory = $false)]
-	[String]$Name = "Harden365 - MFA Guests",
-	[String]$GroupExclude = "Harden365 - CA Exclusion - MFA Guests Exclude"   
-)
+    param(
+        [Parameter(Mandatory = $false)]
+        [String]$Name = "Harden365 - MFA Guests",
+        [String]$GroupExclude = "Harden365 - CA Exclusion - MFA Guests Exclude"   
+    )
 
 
-#SCRIPT
-$ExcludeCAGroup = (Get-MgGroup -All | Where-Object { $_.DisplayName -eq $GroupExclude }).Id
-$DomainOnM365=(Get-MgDomain | Where-Object { $_.IsInitial -eq $true }).Id
-$CondAccPol=Get-MgIdentityConditionalAccessPolicy -Filter "DisplayName eq '$name'"
-$idBriceGlass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.glass@$domainOnM365" }).Id
-$idBriceDouglass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.douglass@$domainOnM365" }).Id
+    #SCRIPT
+    $ExcludeCAGroup = (Get-MgGroup -All | Where-Object { $_.DisplayName -eq $GroupExclude }).Id
+    $DomainOnM365 = (Get-MgDomain | Where-Object { $_.IsInitial -eq $true }).Id
+    $CondAccPol = Get-MgIdentityConditionalAccessPolicy -Filter "DisplayName eq '$name'"
+    $idBriceGlass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.glass@$domainOnM365" }).Id
+    $idBriceDouglass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.douglass@$domainOnM365" }).Id
 
-    if (-not $CondAccPol){
+    if (-not $CondAccPol) {
         Try {
             $params = @{
-	                displayName = "$Name"
-	                state = "disabled"
-	                conditions = @{
-		                clientAppTypes = @(
-                            "Browser"
-                            "MobileAppsAndDesktopClients"
-		                )
-		                applications = @{
-			                includeApplications = @(
-				            "All"
-			                )
-		                }
-		                users = @{
-                            includeUsers = @(
-                                "GuestsOrExternalUsers"
-                                )
-                            excludeUsers = @(
-				                "$idBriceGlass"
-                                "$idBriceDouglass"
-			                    )
-                            excludeGroups = @(
-                                $ExcludeCAGroup
-			                    )
-		                }
-	                }
-	                grantControls = @{
-		                operator = "OR"
-		                builtInControls = @(
-                        "mfa"
+                displayName     = "$Name"
+                state           = "disabled"
+                conditions      = @{
+                    clientAppTypes = @(
+                        "Browser"
+                        "MobileAppsAndDesktopClients"
+                    )
+                    applications   = @{
+                        includeApplications = @(
+                            "All"
                         )
-	                }
-	                sessionControls = @{
-                        disableResilienceDefaults = "false"
-                        applicationEnforcedRestrictions = $null
-                        cloudAppSecurity = $null
-		                SignInFrequency = @{
-			                Value = "7"
-                            type = "days"
-                            authenticationType = "primaryAndSecondaryAuthentication"
-                            frequencyInterval = "timeBased"
-                            isEnabled ="true"
-		                }
                     }
+                    users          = @{
+                        includeUsers  = @(
+                            "GuestsOrExternalUsers"
+                        )
+                        excludeUsers  = @(
+                            "$idBriceGlass"
+                            "$idBriceDouglass"
+                        )
+                        excludeGroups = @(
+                            $ExcludeCAGroup
+                        )
+                    }
+                }
+                grantControls   = @{
+                    operator        = "OR"
+                    builtInControls = @(
+                        "mfa"
+                    )
+                }
+                sessionControls = @{
+                    disableResilienceDefaults       = "false"
+                    applicationEnforcedRestrictions = $null
+                    cloudAppSecurity                = $null
+                    SignInFrequency                 = @{
+                        Value              = "7"
+                        type               = "days"
+                        authenticationType = "primaryAndSecondaryAuthentication"
+                        frequencyInterval  = "timeBased"
+                        isEnabled          = "true"
+                    }
+                }
             }
             New-MgIdentityConditionalAccessPolicy -BodyParameter $params
             Write-LogInfo "Conditional Access '$Name' created"
-            }
-                 Catch {
-                        Write-LogError "CA '$Name' not created"
-                        }
-            }
-            else { 
-                  Write-LogWarning "CA '$Name' already created!"
-                  }
+        }
+        Catch {
+            Write-LogError "CA '$Name' not created"
+        }
+    }
+    else { 
+        Write-LogWarning "CA '$Name' already created!"
+    }
 }
 
 Function Start-UnsupportedDevicePlatforms {
-     <#
+    <#
         .Synopsis
          Create CA to Unsupported Device Platforms.
         
@@ -550,82 +546,82 @@ Function Start-UnsupportedDevicePlatforms {
          
     #>
 
-	param(
-	[Parameter(Mandatory = $false)]
-	[String]$Name = "Harden365 - Unsupported Device Platforms",
-    [String]$GroupExclude = "Harden365 - CA Exclusion - Unsupported Device Platforms Exclude"
-)
+    param(
+        [Parameter(Mandatory = $false)]
+        [String]$Name = "Harden365 - Unsupported Device Platforms",
+        [String]$GroupExclude = "Harden365 - CA Exclusion - Unsupported Device Platforms Exclude"
+    )
 
 
-#SCRIPT
-$ExcludeCAGroup = (Get-MgGroup -All | Where-Object { $_.DisplayName -eq $GroupExclude }).Id
-$DomainOnM365=(Get-MgDomain | Where-Object { $_.IsInitial -eq $true }).Id
-$CondAccPol=Get-MgIdentityConditionalAccessPolicy -Filter "DisplayName eq '$name'"
-$idBriceGlass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.glass@$domainOnM365" }).Id
-$idBriceDouglass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.douglass@$domainOnM365" }).Id
-    if (-not $CondAccPol){
+    #SCRIPT
+    $ExcludeCAGroup = (Get-MgGroup -All | Where-Object { $_.DisplayName -eq $GroupExclude }).Id
+    $DomainOnM365 = (Get-MgDomain | Where-Object { $_.IsInitial -eq $true }).Id
+    $CondAccPol = Get-MgIdentityConditionalAccessPolicy -Filter "DisplayName eq '$name'"
+    $idBriceGlass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.glass@$domainOnM365" }).Id
+    $idBriceDouglass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.douglass@$domainOnM365" }).Id
+    if (-not $CondAccPol) {
         Try {
             $params = @{
-	                displayName = "$Name"
-	                state = "disabled"
-	                conditions = @{
-		                clientAppTypes = @(
-                            "Browser"
-                            "MobileAppsAndDesktopClients"
-		                )
-		                applications = @{
-			                includeApplications = @(
-				            "All"
-			                )
-		                }
-		                users = @{
-                            includeUsers = @(
-                                "All"
-                                )
-                            excludeUsers = @(
-                                "GuestsOrExternalUsers"
-				                "$idBriceGlass"
-                                "$idBriceDouglass"
-			                    )
-                            excludeGroups = @(
-                                $ExcludeCAGroup
-			                    )
-		                }
-                        platforms = @{
-                            includePlatforms = @(
-                                "All"
-                                )
-                            excludePlatforms = @(
-                                "Android"
-                                "iOS"
-                                "windows"
-                                "macOS"
-                                )
-	                    }
-                    }
-	                grantControls = @{
-		                operator = "OR"
-		                builtInControls = @(
-                        "block"
+                displayName   = "$Name"
+                state         = "disabled"
+                conditions    = @{
+                    clientAppTypes = @(
+                        "Browser"
+                        "MobileAppsAndDesktopClients"
+                    )
+                    applications   = @{
+                        includeApplications = @(
+                            "All"
                         )
-	                }
+                    }
+                    users          = @{
+                        includeUsers  = @(
+                            "All"
+                        )
+                        excludeUsers  = @(
+                            "GuestsOrExternalUsers"
+                            "$idBriceGlass"
+                            "$idBriceDouglass"
+                        )
+                        excludeGroups = @(
+                            $ExcludeCAGroup
+                        )
+                    }
+                    platforms      = @{
+                        includePlatforms = @(
+                            "All"
+                        )
+                        excludePlatforms = @(
+                            "Android"
+                            "iOS"
+                            "windows"
+                            "macOS"
+                        )
+                    }
+                }
+                grantControls = @{
+                    operator        = "OR"
+                    builtInControls = @(
+                        "block"
+                    )
+                }
             }
             New-MgIdentityConditionalAccessPolicy -BodyParameter $params
             Write-LogInfo "CA '$Name' created"
-            }
-                 Catch {
-                        Write-LogError "CA '$Name' not created"
-                        }
-            }
-            else { 
-                  Write-LogWarning "CA '$Name' already created!"
-                  }
- Write-LogSection '' -NoHostOutput
+        }
+        Catch {
+            Write-LogError "CA '$Name' not created"
+        }
+    }
+    else { 
+        Write-LogWarning "CA '$Name' already created!"
+    }
+    Write-LogSection '' -NoHostOutput
 
 }
 
 Function Start-MobileDeviceAccessRequirements {
-     <#
+    <#
         .Synopsis
          Create CA to Mobile Device Access Requirements.
         
@@ -637,70 +633,70 @@ Function Start-MobileDeviceAccessRequirements {
          
     #>
 
-	param(
-	[Parameter(Mandatory = $false)]
-	[String]$Name = "Harden365 - Mobile Device Access Requirements"  
-)
+    param(
+        [Parameter(Mandatory = $false)]
+        [String]$Name = "Harden365 - Mobile Device Access Requirements"  
+    )
 
 
-#SCRIPT
-$DomainOnM365=(Get-MgDomain | Where-Object { $_.IsInitial -eq $true }).Id
-$CondAccPol=Get-MgIdentityConditionalAccessPolicy -Filter "DisplayName eq '$name'"
-$idBriceGlass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.glass@$domainOnM365" }).Id
-$idBriceDouglass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.douglass@$domainOnM365" }).Id
-    if (-not $CondAccPol){
+    #SCRIPT
+    $DomainOnM365 = (Get-MgDomain | Where-Object { $_.IsInitial -eq $true }).Id
+    $CondAccPol = Get-MgIdentityConditionalAccessPolicy -Filter "DisplayName eq '$name'"
+    $idBriceGlass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.glass@$domainOnM365" }).Id
+    $idBriceDouglass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.douglass@$domainOnM365" }).Id
+    if (-not $CondAccPol) {
         Try {
-               $params = @{
-	                displayName = "$Name"
-	                state = "disabled"
-	                conditions = @{
-		                clientAppTypes = @(
-                            "MobileAppsAndDesktopClients"
-		                )
-		                applications = @{
-			                includeApplications = @(
-				            "All"
-			                )
-		                }
-		                users = @{
-                            includeUsers = @(
-                                "All"
-                                )
-                            excludeUsers = @(
-				                "$idBriceGlass"
-                                "$idBriceDouglass"
-			                    )
-		                }
-                        platforms = @{
-                            includePlatforms = @(
-                                "Android"
-                                "iOS"
-                                )
-	                    }
-	                }
-	                grantControls = @{
-		                 operator = "OR"
-		                 builtInControls = @(
-                         "approvedApplication",
-                         "compliantApplication"
+            $params = @{
+                displayName   = "$Name"
+                state         = "disabled"
+                conditions    = @{
+                    clientAppTypes = @(
+                        "MobileAppsAndDesktopClients"
+                    )
+                    applications   = @{
+                        includeApplications = @(
+                            "All"
+                        )
+                    }
+                    users          = @{
+                        includeUsers = @(
+                            "All"
+                        )
+                        excludeUsers = @(
+                            "$idBriceGlass"
+                            "$idBriceDouglass"
+                        )
+                    }
+                    platforms      = @{
+                        includePlatforms = @(
+                            "Android"
+                            "iOS"
+                        )
+                    }
+                }
+                grantControls = @{
+                    operator        = "OR"
+                    builtInControls = @(
+                        "approvedApplication",
+                        "compliantApplication"
 
-                         )
-	                }
+                    )
+                }
             }
             New-MgIdentityConditionalAccessPolicy -BodyParameter $params
             Write-LogInfo "CA '$Name' created"
-            }
-                 Catch {
-                        Write-LogError "CA '$Name' not created"
-                        }
-            }
-            else { 
-                  Write-LogWarning "CA '$Name' already created!"
-                  }
+        }
+        Catch {
+            Write-LogError "CA '$Name' not created"
+        }
+    }
+    else { 
+        Write-LogWarning "CA '$Name' already created!"
+    }
 }
 
 Function Start-MobileAppsandDesktopClients {
-     <#
+    <#
         .Synopsis
          Create CA to Mobile Apps and Desktop Clients.
         
@@ -712,72 +708,72 @@ Function Start-MobileAppsandDesktopClients {
          
     #>
 
-	param(
-	[Parameter(Mandatory = $false)]
-	[String]$Name = "Harden365 - Mobile Apps and Desktop Clients"  
-)
+    param(
+        [Parameter(Mandatory = $false)]
+        [String]$Name = "Harden365 - Mobile Apps and Desktop Clients"  
+    )
 
 
-#SCRIPT
-$DomainOnM365=(Get-MgDomain | Where-Object { $_.IsInitial -eq $true }).Id
-$CondAccPol=Get-MgIdentityConditionalAccessPolicy -Filter "DisplayName eq '$name'"
-$idBriceGlass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.glass@$domainOnM365" }).Id
-$idBriceDouglass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.douglass@$domainOnM365" }).Id
-$idTeamsService = (Get-MgServicePrincipal -Filter "DisplayName eq 'Microsoft Teams Services'").AppId
-    if (-not $CondAccPol){
+    #SCRIPT
+    $DomainOnM365 = (Get-MgDomain | Where-Object { $_.IsInitial -eq $true }).Id
+    $CondAccPol = Get-MgIdentityConditionalAccessPolicy -Filter "DisplayName eq '$name'"
+    $idBriceGlass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.glass@$domainOnM365" }).Id
+    $idBriceDouglass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.douglass@$domainOnM365" }).Id
+    $idTeamsService = (Get-MgServicePrincipal -Filter "DisplayName eq 'Microsoft Teams Services'").AppId
+    if (-not $CondAccPol) {
         Try {
-               $params = @{
-	                displayName = "$Name"
-	                state = "disabled"
-	                conditions = @{
-		                clientAppTypes = @(
-                            "MobileAppsAndDesktopClients"
-		                )
-		                applications = @{
-			                includeApplications = @(
-				            "All"
-			                )
-			                excludeApplications = @(
-				            "$idTeamsService"
-			                )
-		                }
-		                users = @{
-                            includeUsers = @(
-                                "All"
-                                )
-                            excludeUsers = @(
-				                "$idBriceGlass"
-                                "$idBriceDouglass"
-			                    )
-		                }
-                        platforms = @{
-                            includePlatforms = @(
-                                "Android"
-                                "iOS"
-                                )
-	                    }
-	                }
-	                grantControls = @{
-		                 operator = "OR"
-		                 builtInControls = @(
-                         "compliantDevice"
-                         )
-	                }
+            $params = @{
+                displayName   = "$Name"
+                state         = "disabled"
+                conditions    = @{
+                    clientAppTypes = @(
+                        "MobileAppsAndDesktopClients"
+                    )
+                    applications   = @{
+                        includeApplications = @(
+                            "All"
+                        )
+                        excludeApplications = @(
+                            "$idTeamsService"
+                        )
+                    }
+                    users          = @{
+                        includeUsers = @(
+                            "All"
+                        )
+                        excludeUsers = @(
+                            "$idBriceGlass"
+                            "$idBriceDouglass"
+                        )
+                    }
+                    platforms      = @{
+                        includePlatforms = @(
+                            "Android"
+                            "iOS"
+                        )
+                    }
+                }
+                grantControls = @{
+                    operator        = "OR"
+                    builtInControls = @(
+                        "compliantDevice"
+                    )
+                }
             }
             New-MgIdentityConditionalAccessPolicy -BodyParameter $params
             Write-LogInfo "Conditional Access '$Name' created"
-            }
-                 Catch {
-                        Write-LogError "CA '$Name' not created"
-                        }
-            }
-            else { 
-                  Write-LogWarning "CA '$Name' already created!"
-                  }
+        }
+        Catch {
+            Write-LogError "CA '$Name' not created"
+        }
+    }
+    else { 
+        Write-LogWarning "CA '$Name' already created!"
+    }
 }
 
 Function Start-HighRiskUsers {
-     <#
+    <#
         .Synopsis
          Create CA to users connection.
         
@@ -789,73 +785,72 @@ Function Start-HighRiskUsers {
          
     #>
 
-	param(
-	[Parameter(Mandatory = $false)]
-	[String]$Name = "Harden365 - High-Risk Users"  
-)
+    param(
+        [Parameter(Mandatory = $false)]
+        [String]$Name = "Harden365 - High-Risk Users"  
+    )
 
 
-#SCRIPT
-if (((Get-MgSubscribedSku | Where-Object { $_.CapabilityStatus -eq "Enabled" }).ServicePlans).ServicePlanName -match "AAD_PREMIUM_P2")
-    { 
-$DomainOnM365=(Get-MgDomain | Where-Object { $_.IsInitial -eq $true }).Id
-$CondAccPol=Get-MgIdentityConditionalAccessPolicy -Filter "DisplayName eq '$name'"
-$idBriceGlass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.glass@$domainOnM365" }).Id
-$idBriceDouglass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.douglass@$domainOnM365" }).Id
+    #SCRIPT
+    if (((Get-MgSubscribedSku | Where-Object { $_.CapabilityStatus -eq "Enabled" }).ServicePlans).ServicePlanName -match "AAD_PREMIUM_P2") { 
+        $DomainOnM365 = (Get-MgDomain | Where-Object { $_.IsInitial -eq $true }).Id
+        $CondAccPol = Get-MgIdentityConditionalAccessPolicy -Filter "DisplayName eq '$name'"
+        $idBriceGlass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.glass@$domainOnM365" }).Id
+        $idBriceDouglass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.douglass@$domainOnM365" }).Id
 
-    if (-not $CondAccPol){
-        Try {
-            $params = @{
-	                displayName = "$Name"
-	                state = "disabled"
-	                conditions = @{
-		                clientAppTypes = @(
+        if (-not $CondAccPol) {
+            Try {
+                $params = @{
+                    displayName   = "$Name"
+                    state         = "disabled"
+                    conditions    = @{
+                        clientAppTypes = @(
                             "All"
-		                )
-		                applications = @{
-			                includeApplications = @(
-				            "All"
-			                )
-		                }
-		                users = @{
+                        )
+                        applications   = @{
+                            includeApplications = @(
+                                "All"
+                            )
+                        }
+                        users          = @{
                             includeUsers = @(
                                 "All"
-                                )
+                            )
                             excludeUsers = @(
-				                "$idBriceGlass"
+                                "$idBriceGlass"
                                 "$idBriceDouglass"
-			                    )
-		                }
-		                UserRiskLevels = @(
-                            "High"
-		                )
-	                }
-	                grantControls = @{
-		                operator = "AND"
-		                builtInControls = @(
-                        "mfa"
-                        "passwordChange"
-                        )
-	                }
-            }
-            New-MgIdentityConditionalAccessPolicy -BodyParameter $params
-            Write-LogInfo "CA '$Name' created"
-            }
-                 Catch {
-                        Write-LogError "CA '$Name' not created"
+                            )
                         }
+                        UserRiskLevels = @(
+                            "High"
+                        )
+                    }
+                    grantControls = @{
+                        operator        = "AND"
+                        builtInControls = @(
+                            "mfa"
+                            "passwordChange"
+                        )
+                    }
+                }
+                New-MgIdentityConditionalAccessPolicy -BodyParameter $params
+                Write-LogInfo "CA '$Name' created"
             }
-            else { 
-                  Write-LogWarning "CA '$Name' already created!"
-                  }
-}
+            Catch {
+                Write-LogError "CA '$Name' not created"
+            }
+        }
+        else { 
+            Write-LogWarning "CA '$Name' already created!"
+        }
+    }
 
- Write-LogSection '' -NoHostOutput
+    Write-LogSection '' -NoHostOutput
 
 }
 
 Function Start-HighRiskSignIn {
-     <#
+    <#
         .Synopsis
          Create CA to users connection.
         
@@ -867,65 +862,64 @@ Function Start-HighRiskSignIn {
          
     #>
 
-	param(
-	[Parameter(Mandatory = $false)]
-	[String]$Name = "Harden365 - High-Risk SignIn"
-)
+    param(
+        [Parameter(Mandatory = $false)]
+        [String]$Name = "Harden365 - High-Risk SignIn"
+    )
 
-#SCRIPT
-if (((Get-MgSubscribedSku | Where-Object { $_.CapabilityStatus -eq "Enabled" }).ServicePlans).ServicePlanName -match "AAD_PREMIUM_P2")
-    { 
-$DomainOnM365=(Get-MgDomain | Where-Object { $_.IsInitial -eq $true }).Id
-$CondAccPol=Get-MgIdentityConditionalAccessPolicy -Filter "DisplayName eq '$name'"
-$idBriceGlass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.glass@$domainOnM365" }).Id
-$idBriceDouglass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.douglass@$domainOnM365" }).Id
+    #SCRIPT
+    if (((Get-MgSubscribedSku | Where-Object { $_.CapabilityStatus -eq "Enabled" }).ServicePlans).ServicePlanName -match "AAD_PREMIUM_P2") { 
+        $DomainOnM365 = (Get-MgDomain | Where-Object { $_.IsInitial -eq $true }).Id
+        $CondAccPol = Get-MgIdentityConditionalAccessPolicy -Filter "DisplayName eq '$name'"
+        $idBriceGlass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.glass@$domainOnM365" }).Id
+        $idBriceDouglass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.douglass@$domainOnM365" }).Id
 
-    if (-not $CondAccPol){
-        Try {
-            $params = @{
-	                displayName = "$Name"
-	                state = "disabled"
-	                conditions = @{
-		                clientAppTypes = @(
+        if (-not $CondAccPol) {
+            Try {
+                $params = @{
+                    displayName   = "$Name"
+                    state         = "disabled"
+                    conditions    = @{
+                        clientAppTypes   = @(
                             "All"
-		                )
-		                applications = @{
-			                includeApplications = @(
-				            "All"
-			                )
-		                }
-		                users = @{
+                        )
+                        applications     = @{
+                            includeApplications = @(
+                                "All"
+                            )
+                        }
+                        users            = @{
                             includeUsers = @(
                                 "All"
-                                )
+                            )
                             excludeUsers = @(
-				                "$idBriceGlass"
+                                "$idBriceGlass"
                                 "$idBriceDouglass"
-			                    )
-		                }
-		                SignInRiskLevels = @(
+                            )
+                        }
+                        SignInRiskLevels = @(
                             "High"
                             "Medium"
-		                )
-	                }
-	                grantControls = @{
-		                operator = "AND"
-		                builtInControls = @(
-                        "mfa"
                         )
-	                }
+                    }
+                    grantControls = @{
+                        operator        = "AND"
+                        builtInControls = @(
+                            "mfa"
+                        )
+                    }
+                }
+                New-MgIdentityConditionalAccessPolicy -BodyParameter $params
+                Write-LogInfo "CA '$Name' created"
             }
-            New-MgIdentityConditionalAccessPolicy -BodyParameter $params
-            Write-LogInfo "CA '$Name' created"
+            Catch {
+                Write-LogError "CA '$Name' not created"
             }
-                 Catch {
-                        Write-LogError "CA '$Name' not created"
-                        }
-            }
-            else { 
-                  Write-LogWarning "CA '$Name' already created!"
-                  }
- }
+        }
+        else { 
+            Write-LogWarning "CA '$Name' already created!"
+        }
+    }
 }
 
  

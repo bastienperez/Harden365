@@ -16,9 +16,8 @@
 #>
 
 
-Function Start-ImportPhoneNumbers
-{
-     <#
+Function Start-ImportPhoneNumbers {
+    <#
         .Synopsis
          Import csv for activate MFA by SMS..
         
@@ -34,42 +33,32 @@ Function Start-ImportPhoneNumbers
          
     #>
 
-	param(
-	[Parameter(Mandatory = $false)]
-	[String]$Name = "Import PhoneNumber",
-    [String]$ImportCSV = "ImportPhoneNumbers.csv"
-)
+    param(
+        [Parameter(Mandatory = $false)]
+        [String]$Name = "Import PhoneNumber",
+        [String]$ImportCSV = "ImportPhoneNumbers.csv"
+    )
 
-Write-LogSection 'IMPORT PHONE NUMBERS' -NoHostOutput
+    Write-LogSection 'IMPORT PHONE NUMBERS' -NoHostOutput
 
-#SCRIPT
-Write-LogInfo "Import CSV File : $ImportCSV"
+    #SCRIPT
+    Write-LogInfo "Import CSV File : $ImportCSV"
 
-Try {
-     Import-CSV ".\Input\$ImportCSV" -Delimiter ";" | ForEach-Object {
-     if($_.ImportPhoneNumber -eq "YES")
-     {
-     $null = New-MgUserAuthenticationPhoneMethod -UserId $($_.UserPrincipalName) -phoneType "mobile" -phoneNumber $($_.PhoneNumbers)
-     Write-LogInfo "$($_.UserPrincipalName) : PhoneNumber $($_.PhoneNumbers) added"
-     }
-     else { 
-     Write-LogWarning "$($_.UserPrincipalName) : MFA not activated !"
-     }
-     }
-     } catch { Write-LogError "Import CSV error" }
+    try {
+        Import-CSV ".\Input\$ImportCSV" -Delimiter ";" | ForEach-Object {
+            if ($_.ImportPhoneNumber -eq "YES") {
+                $null = New-MgUserAuthenticationPhoneMethod -UserId $($_.UserPrincipalName) -phoneType "mobile" -phoneNumber $($_.PhoneNumbers)
+                Write-LogInfo "$($_.UserPrincipalName) : PhoneNumber $($_.PhoneNumbers) added"
+            }
+            else { 
+                Write-LogWarning "$($_.UserPrincipalName) : MFA not activated !"
+            }
+        }
+    }
+    catch { Write-LogError "Import CSV error" }
 
-Disconnect-MgGraph -ErrorAction SilentlyContinue
+    Disconnect-MgGraph -ErrorAction SilentlyContinue
 
-Write-LogSection '' -NoHostOutput
+    Write-LogSection '' -NoHostOutput
 
 }
-
-
-
-
-
-
-
-
-
-

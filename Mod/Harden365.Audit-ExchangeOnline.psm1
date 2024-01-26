@@ -21,7 +21,7 @@
 
 
 Function Start-EOPCheckAutoForward {
-     <#
+    <#
         .Synopsis
          check autoforwarding
         
@@ -33,48 +33,48 @@ Function Start-EOPCheckAutoForward {
          
     #>
 
-	param(
-            $mailboxesList
-)
+    param(
+        $mailboxesList
+    )
 
-#SCRIPT
+    #SCRIPT
 
-            $dateFileString = Get-Date -Format 'FileDateTimeUniversal'
-            $DomainOnM365 = (Get-MgDomain | Where-Object { $_.IsDefault -eq $true }).Id
-            $debugFolderPath = Join-Path $pwd "$DomainOnM365"
+    $dateFileString = Get-Date -Format 'FileDateTimeUniversal'
+    $DomainOnM365 = (Get-MgDomain | Where-Object { $_.IsDefault -eq $true }).Id
+    $debugFolderPath = Join-Path $pwd "$DomainOnM365"
 
-            $debugFileFullPath = Join-Path $debugFolderPath "CheckAutoforward$dateFileString.log"
-            "$(Get-Date -UFormat "%m-%d-%Y %T ") **** AUTOFORWARDING" | Out-File "$debugFileFullPath" -Append
+    $debugFileFullPath = Join-Path $debugFolderPath "CheckAutoforward$dateFileString.log"
+    "$(Get-Date -UFormat "%m-%d-%Y %T ") **** AUTOFORWARDING" | Out-File "$debugFileFullPath" -Append
 
-            # Check autoforwarding in transport rule
-            Write-Loginfo "Check autoforwarding in transport rule"
-            #$AutoforwardTP = @()
-            Get-TransportRule | Where-Object {$null -ne $_.RedirectMessageTo} | ForEach-Object {
-            if ($_ -ne $null) {
+    # Check autoforwarding in transport rule
+    Write-Loginfo "Check autoforwarding in transport rule"
+    #$AutoforwardTP = @()
+    Get-TransportRule | Where-Object { $null -ne $_.RedirectMessageTo } | ForEach-Object {
+        if ($_ -ne $null) {
             "$(Get-Date -UFormat "%m-%d-%Y %T ") - Autoforwarding found in rule $($_.Name)  to $($_.RedirectMessageTo)" | Out-File "$debugFileFullPath" -Append
             Write-LogWarning "Autoforwarding found in rule $($_.Name)  to $($_.RedirectMessageTo)"
-            }
-            }
+        }
+    }
 
-            # Check autoforwarding in exchange admin mailbox setting
-            Write-LogInfo "Check autoforwarding in mailbox settings"
+    # Check autoforwarding in exchange admin mailbox setting
+    Write-LogInfo "Check autoforwarding in mailbox settings"
             
-            foreach ($mailbox in $mailboxesList) {
-				$forwardingAddress = $mailbox | Where-Object { ($null -ne $_.ForwardingAddress) -or ($null -ne $_.ForwardingsmtpAddress) } | ForEach-Object {
-                    "$(Get-Date -UFormat '%m-%d-%Y %T ') - Autoforwarding found in $($_.UserPrincipalName)  to $($_.ForwardingAddress -split "SMTP:") $($_.ForwardingSmtpAddress -split "SMTP:")" | Out-File "$debugFileFullPath" -Append
-                    Write-LogWarning "Autoforwarding found in $($_.UserPrincipalName)  to $($_.ForwardingAddress -split "SMTP:") $($_.ForwardingSmtpAddress -split "SMTP:")"
-                }
+    foreach ($mailbox in $mailboxesList) {
+        $forwardingAddress = $mailbox | Where-Object { ($null -ne $_.ForwardingAddress) -or ($null -ne $_.ForwardingsmtpAddress) } | ForEach-Object {
+            "$(Get-Date -UFormat '%m-%d-%Y %T ') - Autoforwarding found in $($_.UserPrincipalName)  to $($_.ForwardingAddress -split "SMTP:") $($_.ForwardingSmtpAddress -split "SMTP:")" | Out-File "$debugFileFullPath" -Append
+            Write-LogWarning "Autoforwarding found in $($_.UserPrincipalName)  to $($_.ForwardingAddress -split "SMTP:") $($_.ForwardingSmtpAddress -split "SMTP:")"
+        }
 
-                # Check autoforwarding in all inbox rule
-                Write-LogInfo "Check autoforwarding in inbox rules"   
+        # Check autoforwarding in all inbox rule
+        Write-LogInfo "Check autoforwarding in inbox rules"   
 
-                $inboxForwardRules = @(Get-InboxRule -Mailbox "$($mailbox.DistinguishedName)" -WarningAction:SilentlyContinue | Where-Object { ($_.Enabled -eq $true) -and (($null -ne $_.ForwardTo) -or ($null -ne $_.ForwardAsAttachmentTo) -or ($null -ne $_.RedirectTo) -or ($_.SendTextMessageNotificationTo.count -gt 0))})
+        $inboxForwardRules = @(Get-InboxRule -Mailbox "$($mailbox.DistinguishedName)" -WarningAction:SilentlyContinue | Where-Object { ($_.Enabled -eq $true) -and (($null -ne $_.ForwardTo) -or ($null -ne $_.ForwardAsAttachmentTo) -or ($null -ne $_.RedirectTo) -or ($_.SendTextMessageNotificationTo.count -gt 0)) })
 
-                foreach ($rule in $forwardingRules) {
-                    "$(Get-Date -UFormat "%m-%d-%Y %T ") - Mailbox '$($rule.MailboxOwnerId)' forward to '$($rule.ForwardTo)$($rule.RedirectTo)'" | Out-File "$debugFileFullPath" -Append
-                    Write-LogWarning "Mailbox '$($rule.MailboxOwnerId)' forward to '$($rule.ForwardTo)$($rule.RedirectTo)'"
-                }
-            <#
+        foreach ($rule in $forwardingRules) {
+            "$(Get-Date -UFormat "%m-%d-%Y %T ") - Mailbox '$($rule.MailboxOwnerId)' forward to '$($rule.ForwardTo)$($rule.RedirectTo)'" | Out-File "$debugFileFullPath" -Append
+            Write-LogWarning "Mailbox '$($rule.MailboxOwnerId)' forward to '$($rule.ForwardTo)$($rule.RedirectTo)'"
+        }
+        <#
             ((Get-Mailbox -ResultSize Unlimited) | Where-Object { ($null -ne $_.ForwardingAddress) -or ($null -ne $_.ForwardingsmtpAddress)}) | ForEach-Object {
             if ($_ -ne $null) {
             "$(Get-Date -UFormat '%m-%d-%Y %T ') - Autoforwarding found in $($_.UserPrincipalName)  to $($_.ForwardingAddress -split "SMTP:") $($_.ForwardingSmtpAddress -split "SMTP:")" | Out-File "$debugFileFullPath" -Append
@@ -94,12 +94,12 @@ Function Start-EOPCheckAutoForward {
             Write-LogWarning "Mailbox '$($rule.MailboxOwnerId)' forward to '$($rule.ForwardTo)$($rule.RedirectTo)'"
             }
             #>
-Write-LogInfo "Audit file generated in folder .\$DomainOnM365"            
+        Write-LogInfo "Audit file generated in folder .\$DomainOnM365"            
+    }
 }
 
-
 Function Start-EOPCheckPermissionsMailbox {
-     <#
+    <#
         .Synopsis
          check Mailbox permissions
         
@@ -111,44 +111,44 @@ Function Start-EOPCheckPermissionsMailbox {
          
     #>
 
-	param(
-            $mailboxesList
-)
+    param(
+        $mailboxesList
+    )
 
-#SCRIPT
-$DomainOnM365 = (Get-MgDomain | Where-Object { $_.IsDefault -eq $true }).Id
-$MailboxCollection = @()
-#$MailboxCollection = Get-Mailbox -ResultSize Unlimited
-$MailboxCollection = Get-EXOMailbox -ResultSize Unlimited
+    #SCRIPT
+    $DomainOnM365 = (Get-MgDomain | Where-Object { $_.IsDefault -eq $true }).Id
+    $MailboxCollection = @()
+    #$MailboxCollection = Get-Mailbox -ResultSize Unlimited
+    $MailboxCollection = Get-EXOMailbox -ResultSize Unlimited
 
-$Permissions = @()
-#$Permissions = Get-Mailbox -ResultSize Unlimited | where-object {$_.RecipientTypeDetails -ne 'DiscoveryMailbox'} | ForEach-Object { Get-MailboxPermission -Identity $_.UserPrincipalName | where-object {$_.User -ne 'NT AUTHORITY\SELF'} | select-object Identity,AccessRights,User}
-$Permissions = $MailboxCollection | Where-Object {$_.RecipientTypeDetails -ne 'DiscoveryMailbox'} | ForEach-Object { Get-MailboxPermission -Identity $_.UserPrincipalName | Where-Object {$_.User -ne 'NT AUTHORITY\SELF'} | Select-Object Identity,AccessRights,User}
-$i = 0
-foreach ($item in $Permissions) {
-    foreach ($obj in $item) {
-        $obj | Add-Member -MemberType NoteProperty -Name 'Type' -Value ($MailboxCollection | Where-Object { $_.Name -eq $obj.Identity }).RecipientTypeDetails
-        $obj | Add-Member -MemberType NoteProperty -Name 'Name' -Value ($MailboxCollection | Where-Object { $_.Name -eq $obj.Identity }).Name
-        $obj | Add-Member -MemberType NoteProperty -Name 'UserPrincipalName' -Value ($MailboxCollection | Where-Object { $_.Name -eq $obj.Identity }).UserPrincipalName
+    $Permissions = @()
+    #$Permissions = Get-Mailbox -ResultSize Unlimited | where-object {$_.RecipientTypeDetails -ne 'DiscoveryMailbox'} | ForEach-Object { Get-MailboxPermission -Identity $_.UserPrincipalName | where-object {$_.User -ne 'NT AUTHORITY\SELF'} | select-object Identity,AccessRights,User}
+    $Permissions = $MailboxCollection | Where-Object { $_.RecipientTypeDetails -ne 'DiscoveryMailbox' } | ForEach-Object { Get-MailboxPermission -Identity $_.UserPrincipalName | Where-Object { $_.User -ne 'NT AUTHORITY\SELF' } | Select-Object Identity, AccessRights, User }
+    $i = 0
+    foreach ($item in $Permissions) {
+        foreach ($obj in $item) {
+            $obj | Add-Member -MemberType NoteProperty -Name 'Type' -Value ($MailboxCollection | Where-Object { $_.Name -eq $obj.Identity }).RecipientTypeDetails
+            $obj | Add-Member -MemberType NoteProperty -Name 'Name' -Value ($MailboxCollection | Where-Object { $_.Name -eq $obj.Identity }).Name
+            $obj | Add-Member -MemberType NoteProperty -Name 'UserPrincipalName' -Value ($MailboxCollection | Where-Object { $_.Name -eq $obj.Identity }).UserPrincipalName
+        }
+        $i++
+        $percentComplete = [math]::Round(($i / $Permissions.count) * 100, 2)
+        Write-Progress -Activity "Processing report..." -Status "Mailboxes: $i of $($Permissions.Count)" -percentComplete $percentComplete
+        Write-Progress -Activity "Processing report..." -status "Mailboxes: $i" -Completed
     }
-    $i++
-    $percentComplete = [math]::Round(($i/$Permissions.count)*100,2)
-    Write-Progress -Activity "Processing report..." -Status "Mailboxes: $i of $($Permissions.Count)" -percentComplete $percentComplete
-    Write-Progress -Activity "Processing report..." -status "Mailboxes: $i" -Completed
-}
 
 
 
-# Export CSV
-Write-Loginfo "Check permissions in all mailbox"
-$dateFileString = Get-Date -Format "FileDateTimeUniversal"
-$Permissions | Select-Object Name,UserprincipalName,Type,AccessRights,User | Export-Csv -Path ".\$DomainOnM365\AuditMailboxPermission$dateFileString.csv" -Delimiter ';' -Encoding UTF8 -NoTypeInformation
-Write-LogInfo "Audit file generated in folder .\$DomainOnM365"      
+    # Export CSV
+    Write-Loginfo "Check permissions in all mailbox"
+    $dateFileString = Get-Date -Format "FileDateTimeUniversal"
+    $Permissions | Select-Object Name, UserprincipalName, Type, AccessRights, User | Export-Csv -Path ".\$DomainOnM365\AuditMailboxPermission$dateFileString.csv" -Delimiter ';' -Encoding UTF8 -NoTypeInformation
+    Write-LogInfo "Audit file generated in folder .\$DomainOnM365"      
 }
 
 
 Function Start-EOPCheckPermissionsCalendar {
-     <#
+    <#
         .Synopsis
          check Calendar permissions
         
@@ -160,31 +160,31 @@ Function Start-EOPCheckPermissionsCalendar {
          
     #>
 
-	param(
-            $mailboxesList
-)
+    param(
+        $mailboxesList
+    )
 
-#SCRIPT
-$DomainOnM365 = (Get-MgDomain | Where-Object { $_.IsDefault -eq $true }).Id
+    #SCRIPT
+    $DomainOnM365 = (Get-MgDomain | Where-Object { $_.IsDefault -eq $true }).Id
 
-#$CalendarPermissions=Get-Mailbox -ResultSize Unlimited | where-object {$_.RecipientTypeDetails -ne 'DiscoveryMailbox'} | ForEach-Object {
-$CalendarPermissions = $MailboxCollection | Where-Object {$_.RecipientTypeDetails -ne 'DiscoveryMailbox'} | ForEach-Object {
-    Get-MailboxFolderPermission -Identity "$($_.PrimarySMTPAddress):\Calendrier"  -WarningAction:SilentlyContinue | Where-Object {$_.User.DisplayName -ne "Par Défaut" -and $_.User.DisplayName -ne "Anonyme"}
-    Write-LogInfo " Check calendar permission for $_"
-}
+    #$CalendarPermissions=Get-Mailbox -ResultSize Unlimited | where-object {$_.RecipientTypeDetails -ne 'DiscoveryMailbox'} | ForEach-Object {
+    $CalendarPermissions = $MailboxCollection | Where-Object { $_.RecipientTypeDetails -ne 'DiscoveryMailbox' } | ForEach-Object {
+        Get-MailboxFolderPermission -Identity "$($_.PrimarySMTPAddress):\Calendrier"  -WarningAction:SilentlyContinue | Where-Object { $_.User.DisplayName -ne "Par Défaut" -and $_.User.DisplayName -ne "Anonyme" }
+        Write-LogInfo " Check calendar permission for $_"
+    }
 
-# Export CSV
-Write-Loginfo "Check permissions in all Calendars"
-$dateFileString = Get-Date -Format "FileDateTimeUniversal"
-#mkdir -Force ".\Audit" | Out-Null
-$null = New-Item -ItemType Directory -Name "Audit"
-$CalendarPermissions | Select-Object Identity,User,AccessRights | Export-Csv -Path ".\$DomainOnM365\AuditCalendarPermission$dateFileString.csv" -Delimiter ';' -Encoding UTF8 -NoTypeInformation
-Write-LogInfo "Audit file generated in folder .\$DomainOnM365"      
+    # Export CSV
+    Write-Loginfo "Check permissions in all Calendars"
+    $dateFileString = Get-Date -Format "FileDateTimeUniversal"
+    #mkdir -Force ".\Audit" | Out-Null
+    $null = New-Item -ItemType Directory -Name "Audit"
+    $CalendarPermissions | Select-Object Identity, User, AccessRights | Export-Csv -Path ".\$DomainOnM365\AuditCalendarPermission$dateFileString.csv" -Delimiter ';' -Encoding UTF8 -NoTypeInformation
+    Write-LogInfo "Audit file generated in folder .\$DomainOnM365"      
 }
 
 
 Function Start-EOPCheckPermissionsContacts {
-     <#
+    <#
         .Synopsis
          check Contacts permissions
         
@@ -196,22 +196,22 @@ Function Start-EOPCheckPermissionsContacts {
          
     #>
 
-	param(
-)
+    param(
+    )
 
-#SCRIPT
-$DomainOnM365 = (Get-MgDomain | Where-Object { $_.IsDefault -eq $true }).Id
-#$ContactPermissions=Get-Mailbox -ResultSize Unlimited | where-object {$_.RecipientTypeDetails -ne 'DiscoveryMailbox'} | ForEach-Object {
-    $ContactPermissions = $MailboxCollection | Where-Object {$_.RecipientTypeDetails -ne 'DiscoveryMailbox'} | ForEach-Object {
-        Get-MailboxFolderPermission -Identity "$($_.PrimarySMTPAddress):\Contacts"  -WarningAction:SilentlyContinue | Where-Object {$_.User.DisplayName -ne "Par Défaut" -and $_.User.DisplayName -ne "Anonyme"}
+    #SCRIPT
+    $DomainOnM365 = (Get-MgDomain | Where-Object { $_.IsDefault -eq $true }).Id
+    #$ContactPermissions=Get-Mailbox -ResultSize Unlimited | where-object {$_.RecipientTypeDetails -ne 'DiscoveryMailbox'} | ForEach-Object {
+    $ContactPermissions = $MailboxCollection | Where-Object { $_.RecipientTypeDetails -ne 'DiscoveryMailbox' } | ForEach-Object {
+        Get-MailboxFolderPermission -Identity "$($_.PrimarySMTPAddress):\Contacts"  -WarningAction:SilentlyContinue | Where-Object { $_.User.DisplayName -ne "Par Défaut" -and $_.User.DisplayName -ne "Anonyme" }
         Write-LogInfo " Check contacts permission for $_"
-        }
+    }
 
-# Export CSV
-Write-Loginfo "Check permissions in all Contacts"
-$dateFileString = Get-Date -Format "FileDateTimeUniversal"
-#mkdir -Force ".\Audit" | Out-Null
-$null = New-Item -ItemType Directory -Name "Audit"
-$ContactPermissions | Select-Object Identity,User,AccessRights | Export-Csv -Path ".\$DomainOnM365\AuditContactPermission$dateFileString.csv" -Delimiter ';' -Encoding UTF8 -NoTypeInformation
-Write-LogInfo "Audit file generated in folder .\$DomainOnM365"      
+    # Export CSV
+    Write-Loginfo "Check permissions in all Contacts"
+    $dateFileString = Get-Date -Format "FileDateTimeUniversal"
+    #mkdir -Force ".\Audit" | Out-Null
+    $null = New-Item -ItemType Directory -Name "Audit"
+    $ContactPermissions | Select-Object Identity, User, AccessRights | Export-Csv -Path ".\$DomainOnM365\AuditContactPermission$dateFileString.csv" -Delimiter ';' -Encoding UTF8 -NoTypeInformation
+    Write-LogInfo "Audit file generated in folder .\$DomainOnM365"      
 }
