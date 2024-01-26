@@ -163,7 +163,7 @@ ForEach ($user in $Users) {
                         }
                     }
                     if ($MethodAuthType -ne 'PhoneAuthentication'){
-                    if ($methods -eq $null) {
+                    if ($null -eq $methods) {
                     $methods = $methodAuthType} else {
                     $methods = $methods,$methodAuthType -join ", "}
                     }

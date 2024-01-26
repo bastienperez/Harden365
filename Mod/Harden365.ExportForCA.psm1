@@ -37,7 +37,7 @@ Write-LogSection 'EXPORT USERS LIST' -NoHostOutput
 $Users = Get-MsolUser -All | Where-Object {$_.IsLicensed -eq $true} | Select-Object UserPrincipalName,WhenCreated,LastPasswordChangeTimestamp,PasswordNeverExpires,StrongAuthenticationMethods, `
                                                                         @{Name = 'PhoneNumbers'; Expression = {($_.StrongAuthenticationUserDetails).PhoneNumber}},
                                                                         @{Name = 'LicensePlans'; Expression = {(($_.licenses).Accountsku).SkupartNumber}}
-
+                                                               
 #$ExportUsers = @()
 [System.Collections.Generic.List[PSObject]]$ExportUsers = @()
           foreach ($user in $Users) {

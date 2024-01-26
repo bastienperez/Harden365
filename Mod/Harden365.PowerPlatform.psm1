@@ -20,7 +20,7 @@
 #>
 
 Function Start-BlockShareAppsEveryone {
-     <#
+    <#
         .Synopsis
          Disable User to share Apps to everyone.
         
@@ -36,23 +36,25 @@ Function Start-BlockShareAppsEveryone {
         
     )
 
-Write-LogSection 'POWERPLATFORM' -NoHostOutput
+    Write-LogSection 'POWERPLATFORM' -NoHostOutput
 
-#SCRIPT
-try {
-Test-PowerAppsAccount }
-catch {}
-if ((Get-TenantSettings).powerPlatform.powerApps.disableShareWithEveryone -eq $false) {
-    Write-LogWarning "User allow to share apps with everyone"
-    $settings = Get-TenantSettings
-    $settings.powerPlatform.powerApps.disableShareWithEveryone=$true
-    Set-TenantSettings $settings
-    Write-LogInfo "Disable standard users to share apps with everyone"}
-else {Write-LogInfo "Standard users already disabled to share apps with everyone $upn"}
+    #SCRIPT
+    try {
+        Test-PowerAppsAccount 
+    }
+    catch {}
+    if ((Get-TenantSettings).powerPlatform.powerApps.disableShareWithEveryone -eq $false) {
+        Write-LogWarning "User allow to share apps with everyone"
+        $settings = Get-TenantSettings
+        $settings.powerPlatform.powerApps.disableShareWithEveryone = $true
+        Set-TenantSettings $settings
+        Write-LogInfo "Disable standard users to share apps with everyone"
+    }
+    else { Write-LogInfo "Standard users already disabled to share apps with everyone $upn" }
 }
 
 Function Start-BlockSubscriptionFree {
-     <#
+    <#
         .Synopsis
          Disable subscription free licence by users.
         
@@ -65,16 +67,30 @@ Function Start-BlockSubscriptionFree {
     #>
 
 
-#SCRIPT
+    #SCRIPT
+    # https://learn.microsoft.com/en-us/entra/identity/users/directory-self-service-signup#how-do-the-controls-work-together
+    if ((Get-MgPolicyAuthorizationPolicy).AllowedToSignUpEmailBasedSubscriptions) {
+        $body = @{
+            allowedToSignUpEmailBasedSubscriptions = $false
+        }
+        Update-MgPolicyAuthorizationPolicy -BodyParameter $body
+
+        Write-LogInfo "Disable standard users from creating free subscriptions"
+    }
+    else {
+        Write-LogInfo "Standard users already disabled to create free subscriptions"
+    }
+    <#
 if ((Get-MsolCompanyInformation).AllowAdHocSubscriptions -eq $true) {
     Write-LogWarning "Prevent standard users from creating free subscriptions"
     Set-MsolCompanySettings -AllowAdHocSubscriptions $false
     Write-LogInfo "Disable standard users from creating free subscriptions"}
 else {Write-LogInfo "Standard users already disabled to create free subscriptions"}
 }
-
+#>
+}
 Function Start-BlockSubscriptionPayable {
-     <#
+    <#
         .Synopsis
          Disable subscription payable licence by users.
         
@@ -87,26 +103,27 @@ Function Start-BlockSubscriptionPayable {
     #>
 
 
-#SCRIPT
-#BLOCKPAYABLESUBSCRIPTION
-try {Get-MSCommerceProductPolicies -PolicyId AllowSelfServicePurchase -ErrorAction Stop}
-catch {
-    $null = Connect-MSCommerce
+    #SCRIPT
+    #BLOCKPAYABLESUBSCRIPTION
+    try { Get-MSCommerceProductPolicies -PolicyId AllowSelfServicePurchase -ErrorAction Stop }
+    catch {
+        $null = Connect-MSCommerce
     }
 
-$Products = Get-MSCommerceProductPolicies -PolicyId AllowSelfServicePurchase
-ForEach ($Product in $Products) {
+    $Products = Get-MSCommerceProductPolicies -PolicyId AllowSelfServicePurchase
+    ForEach ($Product in $Products) {
         $productName = $Product.ProductName
-    if ($Product.PolicyValue -eq "Enabled") {
-        Write-LogWarning "Prevent standard users from creating $ProductName payable subscriptions"
-        $null = Update-MSCommerceProductPolicy -PolicyId AllowSelfServicePurchase -ProductId $Product.ProductId -Enabled $false
-        Write-LogInfo "Disable standard users from creating $ProductName payable subscriptions"}
-    else {Write-LogInfo "Standard users already disabled to subscribe $ProductName payable subscriptions"}
+        if ($Product.PolicyValue -eq "Enabled") {
+            Write-LogWarning "Prevent standard users from creating $ProductName payable subscriptions"
+            $null = Update-MSCommerceProductPolicy -PolicyId AllowSelfServicePurchase -ProductId $Product.ProductId -Enabled $false
+            Write-LogInfo "Disable standard users from creating $ProductName payable subscriptions"
+        }
+        else { Write-LogInfo "Standard users already disabled to subscribe $ProductName payable subscriptions" }
     }
 }
 
 Function Start-BlockSubscriptionTrials {
-     <#
+    <#
         .Synopsis
          Disable subscription trial/developer licence by users.
         
@@ -118,18 +135,18 @@ Function Start-BlockSubscriptionTrials {
          
     #>
 
-        Param(
+    Param(
         
     )
 
-#SCRIPT
-if (((Get-AllowedConsentPlans).Types -eq "Internal") -or ((Get-AllowedConsentPlans).Types -eq "Viral")) {
-    Write-LogWarning "Prevent standard users from creating trial/developer subscriptions"
-    Remove-AllowedConsentPlans -Types @("Internal", "Viral") -Prompt $false
-    Write-LogInfo "Disable standard users from creating trial/developer subscriptions"}
-else {Write-LogInfo "Standard users already disabled to create trial/developer subscriptions"}
+    #SCRIPT
+    if (((Get-AllowedConsentPlans).Types -eq "Internal") -or ((Get-AllowedConsentPlans).Types -eq "Viral")) {
+        Write-LogWarning "Prevent standard users from creating trial/developer subscriptions"
+        Remove-AllowedConsentPlans -Types @("Internal", "Viral") -Prompt $false
+        Write-LogInfo "Disable standard users from creating trial/developer subscriptions"
+    }
+    else { Write-LogInfo "Standard users already disabled to create trial/developer subscriptions" }
 
-Write-LogSection '' -NoHostOutput
+    Write-LogSection '' -NoHostOutput
 
 }
-

@@ -12,12 +12,13 @@
     #>
 
      #SCRIPT
+     <#
      if ((Get-MsolCompanyInformation).UsersPermissionToUserConsentToAppEnabled -eq $true) {
           Set-MsolCompanySettings -UsersPermissionToUserConsentToAppEnabled $false
           Write-LogInfo 'Disable User permission consent App registration' 
      }
-
-     <# Disable User permission consent app with MSGraph - need review
+     #>
+     # Disable User permission consent app with MSGraph - need review
      # we need to keep only the current ManagePermissionGrantsForOwnedResource.* policies
      # https://learn.microsoft.com/en-us/entra/identity/enterprise-apps/configure-user-consent?pivots=ms-powershell#disable-user-consent
      $currentPolicies = (Get-MgBetaPolicyAuthorizationPolicy).PermissionGrantPolicyIdsAssignedToDefaultUserRole
@@ -40,7 +41,6 @@
      }
 
      Update-MgBetaPolicyAuthorizationPolicy -AuthorizationPolicyId 'authorizationPolicy' -BodyParameter $body
-     #>
 }
 
 function Start-UserTenantCreation {
