@@ -138,6 +138,8 @@ $currentCountOfOperaions++
 Import-AllScriptModules -OperationCount $currentCountOfOperations -OperationTotal $totalCountofOperations
 $currentCountOfOperations++
 
+# TODO: duplicate with Check-TenantEdition and Check-O365ATP ??
+
 #TENANT NAME
 $TenantName = (Get-MgDomain | Where-Object { $_.IsDefault -eq $true }).Id
 #AZUREADEDITION

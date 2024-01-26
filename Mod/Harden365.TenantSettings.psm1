@@ -114,6 +114,11 @@ Function Check-DefenderATP {
             $O365ATP = "EOP_ENTERPRISE"
             break
         }
+        default {
+            $TenantEdition = "Exchange Online Protection"
+            $O365ATP = "No protection"
+            break
+        }
     }
 
     <#
