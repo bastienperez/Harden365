@@ -252,7 +252,7 @@ Function Start-TiersAdminNoSSPR {
 
 
     #SCRIPT
-    $DomainOnM365 = (Get-MgDomain | Where-Object {$_.IsInitial}).Id
+    $DomainOnM365 = (Get-MgDomain | Where-Object { $_.IsInitial }).Id
 
     if ((Get-MgPolicyAuthorizationPolicy).AllowedToUseSspr -eq $true) {
         Write-LogWarning "SSPR is enable for Admin Accounts"
