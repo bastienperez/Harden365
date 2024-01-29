@@ -79,16 +79,19 @@ Function Get-MSOAuditUsers {
 
 
     #IMPORT LICENSE SKU
-    Write-LogInfo "import all Sku/productNames Licensing"
+    # TODO: replace with function
+    Write-LogInfo "Import all Sku/productNames Licensing"
     $licenseCsvURL = 'https://download.microsoft.com/download/e/3/e/e3e9faf2-f28b-490a-9ada-c6089a1fc5b0/Product%20names%20and%20service%20plan%20identifiers%20for%20licensing.csv'
     $licenseHashTable = @{}
-(Invoke-WebRequest -Uri $licenseCsvURL).ToString() | ConvertFrom-Csv | ForEach-Object {
+
+    Invoke-RestMethod -Uri $licenseCsvURL | ConvertFrom-Csv | ForEach-Object {
         $licenseHashTable[$_.Product_Display_Name] = @{
             "SkuId"         = $_.GUID
             "SkuPartNumber" = $_.String_Id
             "DisplayName"   = $_.Product_Display_Name
         }
     }
+
     Write-LogInfo "Import All Users"
     $Users = Get-MgUser -all -Property UserPrincipalName, PasswordPolicies, DisplayName, id, OnPremisesSyncEnabled, lastPasswordChangeDateTime, SignInActivity, Authentication
     Write-LogInfo "$($Users.count) users imported"
@@ -174,7 +177,7 @@ Function Get-MSOAuditUsers {
         }
         catch {}
      
-        $obj = [pscustomobject][ordered]@{
+        $obj = [PSCustomObject][ordered]@{
             DisplayName          = $user.DisplayName
             UserPrincipalName    = $user.UserPrincipalName
             Licenses             = $licenses
@@ -187,8 +190,8 @@ Function Get-MSOAuditUsers {
         $report.Add($obj)
         $i++
         $percentComplete = [math]::Round(($i / $Users.count) * 100, 2)
-        write-progress -Activity "Processing report..." -Status "Users: $i of $($Users.Count)" -percentComplete $percentComplete
-        write-progress -Activity "Processing report..." -status "Users: $i" -Completed
+        Write-Progress -Activity "Processing report..." -Status "Users: $i of $($Users.Count)" -percentComplete $percentComplete
+        Write-Progress -Activity "Processing report..." -status "Users: $i" -Completed
     } 
 
 

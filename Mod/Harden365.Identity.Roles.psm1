@@ -191,7 +191,7 @@ Function Get-AADRolesAuditP1 {
         }
         catch {}
      
-        $obj = [pscustomobject][ordered]@{
+        $obj = [PSCustomObject][ordered]@{
             DisplayName          = $user.DisplayName
             UserPrincipalName    = $user.UserPrincipalName
             Roles                = $affectedRoles
@@ -205,8 +205,8 @@ Function Get-AADRolesAuditP1 {
         $report.Add($obj)
         $i++
         $percentComplete = [math]::Round(($i / $Users.count) * 100, 2)
-        write-progress -Activity "Processing report..." -Status "Users: $i of $($Users.Count)" -percentComplete $percentComplete
-        write-progress -Activity "Processing report..." -status "Users: $i" -Completed
+        Write-Progress -Activity "Processing report..." -Status "Users: $i of $($Users.Count)" -percentComplete $percentComplete
+        Write-Progress -Activity "Processing report..." -status "Users: $i" -Completed
     } 
 
 
@@ -288,6 +288,7 @@ Function Get-AADRolesAuditP2 {
 
 
     #IMPORT LICENSE SKU
+    # TODO: replace with function
     Write-LogInfo "Import all Sku/productNames Licensing"
     $licenseCsvURL = 'https://download.microsoft.com/download/e/3/e/e3e9faf2-f28b-490a-9ada-c6089a1fc5b0/Product%20names%20and%20service%20plan%20identifiers%20for%20licensing.csv'
     $licenseHashTable = @{}
@@ -314,7 +315,7 @@ Function Get-AADRolesAuditP2 {
         }
         $rolemembers.Add($obj)
         $i++
-        write-progress -Activity "Processing report..." -Status "Roles: $i of $($roles.Count)" -percentComplete (($i / $roles.Count) * 100)
+        Write-Progress -Activity "Processing report..." -Status "Roles: $i of $($roles.Count)" -percentComplete (($i / $roles.Count) * 100)
     }
 
     #IMPORT ROLE ELIGIBLE MEMBER
@@ -493,7 +494,7 @@ Function Get-AADRolesAuditP2 {
         }
         catch {}
      
-        $obj = [pscustomobject][ordered]@{
+        $obj = [PSCustomObject][ordered]@{
             DisplayName          = $user.DisplayName
             UserPrincipalName    = $user.UserPrincipalName
             Roles                = $affectedRoles
@@ -509,8 +510,8 @@ Function Get-AADRolesAuditP2 {
         $report.Add($obj)
         $i++
         $percentComplete = [math]::Round(($i / $Users.count) * 100, 2)
-        write-progress -Activity "Processing report..." -Status "Users: $i of $($Users.Count)" -percentComplete $percentComplete
-        write-progress -Activity "Processing report..." -status "Users: $i" -Completed
+        Write-Progress -Activity "Processing report..." -Status "Users: $i of $($Users.Count)" -percentComplete $percentComplete
+        Write-Progress -Activity "Processing report..." -status "Users: $i" -Completed
     } 
 
 
