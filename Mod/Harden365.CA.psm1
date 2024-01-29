@@ -186,56 +186,65 @@ Function Start-LegacyAuthPolicy {
 
 
     #SCRIPT
+    $emergencyAccount1 = "brice.glass@$domainOnM365"
+    $emergencyAccount2 = "brice.douglass@$domainOnM365"
+
     $DomainOnM365 = (Get-MgDomain | Where-Object { $_.IsInitial -eq $true }).Id
     $ExcludeCAGroup = (Get-MgGroup -All | Where-Object { $_.DisplayName -eq $GroupExclude }).Id
     $CondAccPol = Get-MgIdentityConditionalAccessPolicy -Filter "DisplayName eq '$name'"
-    $idBriceGlass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.glass@$domainOnM365" }).Id
-    $idBriceDouglass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.douglass@$domainOnM365" }).Id
-    if (-not $CondAccPol) {
-        try {
-            $params = @{
-                displayName   = "$Name"
-                state         = "disabled"
-                conditions    = @{
-                    clientAppTypes = @(
-                        "exchangeActiveSync",
-                        "other"
-                    )
-                    applications   = @{
-                        includeApplications = @(
-                            "All"
-                        )
-                    }
-                    users          = @{
-                        includeUsers  = @(
-                            "All"
-                        )
-                        excludeUsers  = @(
-                            "$idBriceGlass"
-                            "$idBriceDouglass"
-                        )
-                        excludeGroups = @(
-                            "$ExcludeCAGroup"
-                        )
-                    }
-                }
-                grantControls = @{
-                    operator        = "OR"
-                    builtInControls = @(
-                        "block"
-                    )
-                }
-            }
-
-            New-MgIdentityConditionalAccessPolicy -BodyParameter $params
-            Write-LogInfo "CA '$Name' created"
-        }
-        catch {
-            Write-LogError "CA '$Name' not created"
-        }
+    $idBriceGlass = (Get-MgUser -Filter "userprincipalname eq '$emergencyAccount1'").Id
+    $idBriceDouglass = (Get-MgUser -Filter "userprincipalname eq '$emergencyAccount2'").Id
+    
+    if ($null -eq $idBriceGlass -or $null -eq $idBriceDouglass) {
+        Write-LogError "You need to create emergency account before create conditional access policies"
     }
-    else { 
-        Write-LogWarning "CA '$Name' already created"
+    else {
+        if (-not $CondAccPol) {
+            try {
+                $params = @{
+                    displayName   = "$Name"
+                    state         = "disabled"
+                    conditions    = @{
+                        clientAppTypes = @(
+                            "exchangeActiveSync",
+                            "other"
+                        )
+                        applications   = @{
+                            includeApplications = @(
+                                "All"
+                            )
+                        }
+                        users          = @{
+                            includeUsers  = @(
+                                "All"
+                            )
+                            excludeUsers  = @(
+                                "$idBriceGlass"
+                                "$idBriceDouglass"
+                            )
+                            excludeGroups = @(
+                                "$ExcludeCAGroup"
+                            )
+                        }
+                    }
+                    grantControls = @{
+                        operator        = "OR"
+                        builtInControls = @(
+                            "block"
+                        )
+                    }
+                }
+    
+                New-MgIdentityConditionalAccessPolicy -BodyParameter $params
+                Write-LogInfo "CA '$Name' created"
+            }
+            catch {
+                Write-LogError "CA '$Name' not created"
+            }
+        }
+        else { 
+            Write-LogWarning "CA '$Name' already created"
+        }
     }
 }
 
@@ -921,5 +930,3 @@ Function Start-HighRiskSignIn {
         }
     }
 }
-
- 
