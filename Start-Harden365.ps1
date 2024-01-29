@@ -143,23 +143,37 @@ $currentCountOfOperations++
 #TENANT NAME
 $TenantName = (Get-MgDomain | Where-Object { $_.IsDefault -eq $true }).Id
 #AZUREADEDITION
-if (((Get-MgSubscribedSku | Where-Object { $_.CapabilityStatus -eq "Enabled" }).ServicePlans).ServicePlanName -match "AAD_PREMIUM_P2")
-{ $TenantEdition = "Entra ID P2" } 
-elseif (((Get-MgSubscribedSku | Where-Object { $_.CapabilityStatus -eq "Enabled" }).ServicePlans).ServicePlanName -match "AAD_PREMIUM")
-{ $TenantEdition = "Entra ID P1" } 
-elseif (((Get-MgSubscribedSku | Where-Object { $_.CapabilityStatus -eq "Enabled" }).ServicePlans).ServicePlanName -match "AAD_BASIC")
-{ $TenantEdition = "Entra ID  Basic" } 
-else
-{ $TenantEdition = "Entra ID  Free" }
+
+$mgSubscribedSkuPlans = ((Get-MgSubscribedSku | Where-Object { $_.CapabilityStatus -eq "Enabled" }).ServicePlans).ServicePlanName
+
+if ($mgSubscribedSkuPlans -match "AAD_PREMIUM_P2") {
+    $TenantEdition = "Entra ID P2"
+}
+
+elseif ($mgSubscribedSkuPlans -match "AAD_PREMIUM") {
+    $TenantEdition = "Entra ID P1"
+}
+elseif($mgSubscribedSkuPlans -match "AAD_BASIC") {
+    $TenantEdition = "Entra ID Basic"
+}
+else {
+    $TenantEdition = "Entra ID Free"
+}
+
+
 #OFFICE365ATP
-if (((Get-MgSubscribedSku | Where-Object { $_.CapabilityStatus -eq "Enabled" }).ServicePlans).ServicePlanName -match "THREAT_INTELLIGENCE")
-{ $O365ATP = "Defender for Office365 P2" }   
-elseif (((Get-MgSubscribedSku | Where-Object { $_.CapabilityStatus -eq "Enabled" }).ServicePlans).ServicePlanName -match "ATP_ENTERPRISE")
-{ $O365ATP = "Defender for Office365 P1" }  
-elseif (((Get-MgSubscribedSku | Where-Object { $_.CapabilityStatus -eq "Enabled" }).ServicePlans).ServicePlanName -match "EOP_ENTERPRISE")
-{ $O365ATP = "Exchange Online Protection" }  
-else
-{ $O365ATP = "No protection" }
+if($mgSubscribedSkuPlans -match "THREAT_INTELLIGENCE") {
+    $O365ATP = "Defender for Office365 P2"
+}
+elseif($mgSubscribedSkuPlans -match "ATP_ENTERPRISE") {
+    $O365ATP = "Defender for Office365 P1"
+}
+elseif($mgSubscribedSkuPlans -match "EOP_ENTERPRISE") {
+    $O365ATP = "Exchange Online Protection"
+}
+else {
+    $O365ATP = "No protection"
+}
 
 ## RUN MAIN MENU
 MainMenu -TenantName $TenantName -TenantEdition $TenantEdition -O365ATP $O365ATP

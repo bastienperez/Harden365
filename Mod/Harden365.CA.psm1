@@ -184,7 +184,6 @@ Function Start-LegacyAuthPolicy {
         [String]$GroupExclude = "Harden365 - CA Exclusion - Legacy Authentification Exclude"
     )
 
-
     #SCRIPT
     $emergencyAccount1 = "brice.glass@$domainOnM365"
     $emergencyAccount2 = "brice.douglass@$domainOnM365"
@@ -266,85 +265,100 @@ Function Start-MFAAdmins {
         [String]$Name = "Harden365 - MFA Admins"
     )
 
+    $mgDirectoryRoleTemplate = Get-MgDirectoryRoleTemplate
 
     #SCRIPT
     $CARoles = @(
-(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Global Administrator" }).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Global Reader" }).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Application Administrator" }).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Authentication Administrator" }).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Billing Administrator" }).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Cloud Application Administrator" }).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Conditional Access Administrator" }).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Exchange Administrator" }).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Helpdesk administrator" }).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Password administrator" }).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Privileged authentication administrator" }).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Privileged Role Administrator" }).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Security administrator" }).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "SharePoint administrator" }).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "User administrator" }).Id)
+        ($mgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Global Administrator" }).Id
+        ($mgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Global Reader" }).Id
+        ($mgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Application Administrator" }).Id
+        ($mgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Authentication Administrator" }).Id
+        ($mgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Billing Administrator" }).Id
+        ($mgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Cloud Application Administrator" }).Id
+        ($mgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Conditional Access Administrator" }).Id
+        ($mgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Exchange Administrator" }).Id
+        ($mgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Helpdesk administrator" }).Id
+        ($mgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Password administrator" }).Id
+        ($mgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Privileged authentication administrator" }).Id
+        ($mgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Privileged Role Administrator" }).Id
+        ($mgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Security administrator" }).Id
+        ($mgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "SharePoint administrator" }).Id
+        ($mgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "User administrator" }).Id
+    )
 
     $DomainOnM365 = (Get-MgDomain | Where-Object { $_.IsInitial -eq $true }).Id
     $CondAccPol = Get-MgIdentityConditionalAccessPolicy -Filter "DisplayName eq '$name'"
-    $idBriceGlass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.glass@$domainOnM365" }).Id
-    $idBriceDouglass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.douglass@$domainOnM365" }).Id
-    if (-not $CondAccPol) {
-        try {
-            $params = @{
-                displayName     = "$Name"
-                state           = "disabled"
-                conditions      = @{
-                    clientAppTypes = @(
-                        "Browser"
-                        "MobileAppsAndDesktopClients"
-                    )
-                    applications   = @{
-                        includeApplications = @(
-                            "All"
-                        )
-                    }
-                    users          = @{
-                        includeRoles = $CARoles
-                        excludeUsers = @(
-                            "$idBriceGlass"
-                            "$idBriceDouglass"
-                        )
-                    }
-                }
-                grantControls   = @{
-                    operator        = "OR"
-                    builtInControls = @(
-                        "mfa"
-                    )
-                }
-                sessionControls = @{
-                    disableResilienceDefaults       = "false"
-                    applicationEnforcedRestrictions = $null
-                    cloudAppSecurity                = $null
-                    SignInFrequency                 = @{
-                        Value              = "4"
-                        type               = "hours"
-                        authenticationType = "primaryAndSecondaryAuthentication"
-                        frequencyInterval  = "timeBased"
-                        isEnabled          = "true"
-                    }
-                    PersistentBrowser               = @{
-                        mode      = "never"
-                        isEnabled = "true"
-                    }
-                }
-            }
+    $emergencyAccount1 = "brice.glass@$domainOnM365"
+    $emergencyAccount2 = "brice.douglass@$domainOnM365"
 
-            New-MgIdentityConditionalAccessPolicy -BodyParameter $params
-            Write-LogInfo "CA '$Name' created"
-        }
-        catch {
-            Write-LogError "CA '$Name' not created"
-        }
+    $DomainOnM365 = (Get-MgDomain | Where-Object { $_.IsInitial -eq $true }).Id
+    $ExcludeCAGroup = (Get-MgGroup -All | Where-Object { $_.DisplayName -eq $GroupExclude }).Id
+    $CondAccPol = Get-MgIdentityConditionalAccessPolicy -Filter "DisplayName eq '$name'"
+    $idBriceGlass = (Get-MgUser -Filter "userprincipalname eq '$emergencyAccount1'").Id
+    $idBriceDouglass = (Get-MgUser -Filter "userprincipalname eq '$emergencyAccount2'").Id
+    
+    if ($null -eq $idBriceGlass -or $null -eq $idBriceDouglass) {
+        Write-LogError "You need to create emergency account before create conditional access policies"
     }
-    else { 
-        Write-LogWarning "CA '$Name' already created!"
+    else {
+
+        if (-not $CondAccPol) {
+            try {
+                $params = @{
+                    displayName     = "$Name"
+                    state           = "disabled"
+                    conditions      = @{
+                        clientAppTypes = @(
+                            "Browser"
+                            "MobileAppsAndDesktopClients"
+                        )
+                        applications   = @{
+                            includeApplications = @(
+                                "All"
+                            )
+                        }
+                        users          = @{
+                            includeRoles = $CARoles
+                            excludeUsers = @(
+                                "$idBriceGlass"
+                                "$idBriceDouglass"
+                            )
+                        }
+                    }
+                    grantControls   = @{
+                        operator        = "OR"
+                        builtInControls = @(
+                            "mfa"
+                        )
+                    }
+                    sessionControls = @{
+                        disableResilienceDefaults       = "false"
+                        applicationEnforcedRestrictions = $null
+                        cloudAppSecurity                = $null
+                        SignInFrequency                 = @{
+                            Value              = "4"
+                            type               = "hours"
+                            authenticationType = "primaryAndSecondaryAuthentication"
+                            frequencyInterval  = "timeBased"
+                            isEnabled          = "true"
+                        }
+                        PersistentBrowser               = @{
+                            mode      = "never"
+                            isEnabled = "true"
+                        }
+                    }
+                }
+
+                New-MgIdentityConditionalAccessPolicy -BodyParameter $params
+                Write-LogInfo "CA '$Name' created"
+            }
+            catch {
+                Write-LogError "CA '$Name' not created"
+            }
+        }
+        else { 
+            Write-LogWarning "CA '$Name' already created!"
+        }
     }
 }
 
@@ -374,24 +388,28 @@ Function Start-MFAUsers {
     $CondAccPol = Get-MgIdentityConditionalAccessPolicy -Filter "DisplayName eq '$name'"
     $idBriceGlass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.glass@$domainOnM365" }).Id
     $idBriceDouglass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.douglass@$domainOnM365" }).Id
+
+    $mgDirectoryRoleTemplate = Get-MgDirectoryRoleTemplate
+
     $CARoles = @(
-(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Global Administrator" }).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Global Reader" }).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Application Administrator" }).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Authentication Administrator" }).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Billing Administrator" }).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Cloud Application Administrator" }).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Conditional Access Administrator" }).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Exchange Administrator" }).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Helpdesk administrator" }).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Password administrator" }).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Privileged authentication administrator" }).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Privileged Role Administrator" }).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Security administrator" }).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "SharePoint administrator" }).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "User administrator" }).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Directory synchronization accounts" }).Id,
-(Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Hybrid Identity administrator" }).Id)
+        ($mgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Global Administrator" }).Id
+        ($mgDirectoryRoleTemplate  | Where-Object { $_.DisplayName -eq "Global Reader" }).Id
+        ($mgDirectoryRoleTemplate  | Where-Object { $_.DisplayName -eq "Application Administrator" }).Id
+        ($mgDirectoryRoleTemplate  | Where-Object { $_.DisplayName -eq "Authentication Administrator" }).Id
+        ($mgDirectoryRoleTemplate  | Where-Object { $_.DisplayName -eq "Billing Administrator" }).Id
+        ($mgDirectoryRoleTemplate  | Where-Object { $_.DisplayName -eq "Cloud Application Administrator" }).Id
+        ($mgDirectoryRoleTemplate  | Where-Object { $_.DisplayName -eq "Conditional Access Administrator" }).Id
+        ($mgDirectoryRoleTemplate  | Where-Object { $_.DisplayName -eq "Exchange Administrator" }).Id
+        ($mgDirectoryRoleTemplate  | Where-Object { $_.DisplayName -eq "Helpdesk administrator" }).Id
+        ($mgDirectoryRoleTemplate  | Where-Object { $_.DisplayName -eq "Password administrator" }).Id
+        ($mgDirectoryRoleTemplate  | Where-Object { $_.DisplayName -eq "Privileged authentication administrator" }).Id
+        ($mgDirectoryRoleTemplate  | Where-Object { $_.DisplayName -eq "Privileged Role Administrator" }).Id
+        ($mgDirectoryRoleTemplate  | Where-Object { $_.DisplayName -eq "Security administrator" }).Id
+        ($mgDirectoryRoleTemplate  | Where-Object { $_.DisplayName -eq "SharePoint administrator" }).Id
+        ($mgDirectoryRoleTemplate  | Where-Object { $_.DisplayName -eq "User administrator" }).Id
+        ($mgDirectoryRoleTemplate  | Where-Object { $_.DisplayName -eq "Directory synchronization accounts" }).Id
+        ($mgDirectoryRoleTemplate  | Where-Object { $_.DisplayName -eq "Hybrid Identity administrator" }).Id
+    )
 
     if (-not $CondAccPol) {
         try {
