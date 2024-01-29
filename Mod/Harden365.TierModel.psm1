@@ -55,7 +55,9 @@ Function Start-EmergencyAccount1 {
     }
 
     #POSHKEEPASS INSTALL MODULE	
-    try { Get-InstalledModule -Name PoShKeePass -ErrorAction Stop > $null }
+    try { 
+        $null = Get-InstalledModule -Name PoShKeePass -ErrorAction Stop
+    }
     catch {  
         Write-LogInfo "Installing PoshKeepass Module!"
         Install-Module -Name PoShKeePass -Force -WarningAction:SilentlyContinue
@@ -69,7 +71,7 @@ Function Start-EmergencyAccount1 {
         Write-LogWarning "User 'brice.glass@$DomainOnM365' already created!"      
     }
     else { 
-        Try {
+        try {
             Remove-KeePassDatabaseConfiguration -DatabaseProfileName "Harden365_uadmin" -Confirm:$false
             Copy-Item -Path ".\Config\Harden365.kp" -Destination "$DomainOnM365\Harden365-$dateString.kdbx"
             New-KeePassDatabaseConfiguration -DatabaseProfileName "Harden365_uadmin" -DatabasePath ".\$DomainOnM365\Harden365-$dateString.kdbx" -UseMasterKey
@@ -101,7 +103,7 @@ Function Start-EmergencyAccount1 {
                 Write-LogWarning "User 'brice.glass@$DomainOnM365' already created"
             }
         }
-        Catch {
+        catch {
             Write-LogError "User 'brice.glass@$DomainOnM365' not created"
         }
     }
@@ -140,7 +142,7 @@ Function Start-EmergencyAccount2 {
         Write-LogWarning "User 'brice.douglass@$DomainOnM365' already created!"      
     }
     else { 
-        Try {
+        try {
             Remove-KeePassDatabaseConfiguration -DatabaseProfileName "Harden365_uadmin" -Confirm:$false
             New-KeePassDatabaseConfiguration -DatabaseProfileName "Harden365_uadmin" -DatabasePath ".\$DomainOnM365\Harden365-$dateString.kdbx" -UseMasterKey
             $SecureString128 = ConvertTo-SecureString "Harden365" -AsPlainText -Force
@@ -171,7 +173,7 @@ Function Start-EmergencyAccount2 {
                 Write-LogWarning "User 'brice.douglass@$DomainOnM365' already created"
             }
         }
-        Catch {
+        catch {
             Write-LogError "User 'brice.douglass@$DomainOnM365' not created"
         }
     }
@@ -200,12 +202,12 @@ Function Start-TiersAdminNoExpire {
     $DomainOnM365 = (Get-MgDomain | Where-Object { $_.IsInitial -match $true }).Id
 
     if ((Get-MgUser).UserPrincipalName -eq "brice.glass@$DomainOnM365") {
-        Try {
+        try {
             Start-Sleep -Seconds 5
             Update-MgUser -UserId "brice.glass@$DomainOnM365" -PasswordPolicies DisablePasswordExpiration
             Write-LogInfo "User 'brice.glass@$DomainOnM365' never expires"
         }
-        Catch {
+        catch {
             Write-LogError "User 'brice.glass@$DomainOnM365' not configured to never expire"
         }
     }
@@ -214,12 +216,12 @@ Function Start-TiersAdminNoExpire {
     }
 
     if ((Get-MgUser).UserPrincipalName -eq "brice.douglass@$DomainOnM365") {
-        Try {
+        try {
             Start-Sleep -Seconds 5
             Update-MgUser -UserId "brice.douglass@$DomainOnM365" -PasswordPolicies DisablePasswordExpiration
             Write-LogInfo "User 'brice.douglass@$DomainOnM365' never expires"
         }
-        Catch {
+        catch {
             Write-LogError "User 'brice.douglass@$DomainOnM365' not configured to never expire"
         }
     }

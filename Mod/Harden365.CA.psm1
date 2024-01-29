@@ -44,11 +44,11 @@ Function Start-GroupMFAUsersExclude {
     #SCRIPT
     $GroupAAD = Get-MgGroup -Filter "DisplayName eq '$Name'"
     if (-not $GroupAAD) {
-        Try {
+        try {
             New-MgGroup -Description "$Name" -DisplayName "$Name" -MailEnabled:$false -SecurityEnabled -MailNickName $MailNickName
             Write-LogInfo "Group '$Name' created"
         }
-        Catch {
+        catch {
             Write-LogError "Group '$Name' not created"
         }
     }
@@ -80,11 +80,11 @@ Function Start-GroupMFAGuestsExclude {
     #SCRIPT
     $GroupAAD = Get-MgGroup -Filter "DisplayName eq '$Name'"
     if (-not $GroupAAD) {
-        Try {
+        try {
             New-MgGroup -Description "$Name" -DisplayName "$Name" -MailEnabled:$false -SecurityEnabled -MailNickName $MailNickName
             Write-LogInfo "Group '$Name' created"
         }
-        Catch {
+        catch {
             Write-LogError "Group '$Name' not created"
         }
     }
@@ -116,11 +116,11 @@ Function Start-GroupLegacyAuthGroupExclude {
     #SCRIPT
     $GroupAAD = Get-MgGroup -Filter "DisplayName eq '$Name'"
     if (-not $GroupAAD) {
-        Try {
+        try {
             New-MgGroup -Description "$Name" -DisplayName "$Name" -MailEnabled:$false -SecurityEnabled -MailNickName $MailNickName
             Write-LogInfo "Group '$Name' created"
         }
-        Catch {
+        catch {
             Write-LogError "Group '$Name' not created"
         }
     }
@@ -152,11 +152,11 @@ Function Start-GroupUnsupportedDevicePlatforms {
     #SCRIPT
     $GroupAAD = Get-MgGroup -Filter "DisplayName eq '$Name'"
     if (-not $GroupAAD) {
-        Try {
+        try {
             New-MgGroup -Description "$Name" -DisplayName "$Name" -MailEnabled:$false -SecurityEnabled -MailNickName $MailNickName
             Write-LogInfo "Group '$Name' created"
         }
-        Catch {
+        catch {
             Write-LogError "Group '$Name' not created"
         }
     }
@@ -192,7 +192,7 @@ Function Start-LegacyAuthPolicy {
     $idBriceGlass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.glass@$domainOnM365" }).Id
     $idBriceDouglass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.douglass@$domainOnM365" }).Id
     if (-not $CondAccPol) {
-        Try {
+        try {
             $params = @{
                 displayName   = "$Name"
                 state         = "disabled"
@@ -230,7 +230,7 @@ Function Start-LegacyAuthPolicy {
             New-MgIdentityConditionalAccessPolicy -BodyParameter $params
             Write-LogInfo "CA '$Name' created"
         }
-        Catch {
+        catch {
             Write-LogError "CA '$Name' not created"
         }
     }
@@ -281,7 +281,7 @@ Function Start-MFAAdmins {
     $idBriceGlass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.glass@$domainOnM365" }).Id
     $idBriceDouglass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.douglass@$domainOnM365" }).Id
     if (-not $CondAccPol) {
-        Try {
+        try {
             $params = @{
                 displayName     = "$Name"
                 state           = "disabled"
@@ -330,7 +330,7 @@ Function Start-MFAAdmins {
             New-MgIdentityConditionalAccessPolicy -BodyParameter $params
             Write-LogInfo "CA '$Name' created"
         }
-        Catch {
+        catch {
             Write-LogError "CA '$Name' not created"
         }
     }
@@ -385,7 +385,7 @@ Function Start-MFAUsers {
 (Get-MgDirectoryRoleTemplate | Where-Object { $_.DisplayName -eq "Hybrid Identity administrator" }).Id)
 
     if (-not $CondAccPol) {
-        Try {
+        try {
             $params = @{
                 displayName     = "$Name"
                 state           = "disabled"
@@ -438,7 +438,7 @@ Function Start-MFAUsers {
             New-MgIdentityConditionalAccessPolicy -BodyParameter $params
             Write-LogInfo "Conditional Access '$Name' created"
         }
-        Catch {
+        catch {
             Write-LogError "CA '$Name' not created"
         }
     }
@@ -475,7 +475,7 @@ Function Start-MFAGuests {
     $idBriceDouglass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.douglass@$domainOnM365" }).Id
 
     if (-not $CondAccPol) {
-        Try {
+        try {
             $params = @{
                 displayName     = "$Name"
                 state           = "disabled"
@@ -524,7 +524,7 @@ Function Start-MFAGuests {
             New-MgIdentityConditionalAccessPolicy -BodyParameter $params
             Write-LogInfo "Conditional Access '$Name' created"
         }
-        Catch {
+        catch {
             Write-LogError "CA '$Name' not created"
         }
     }
@@ -560,7 +560,7 @@ Function Start-UnsupportedDevicePlatforms {
     $idBriceGlass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.glass@$domainOnM365" }).Id
     $idBriceDouglass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.douglass@$domainOnM365" }).Id
     if (-not $CondAccPol) {
-        Try {
+        try {
             $params = @{
                 displayName   = "$Name"
                 state         = "disabled"
@@ -609,7 +609,7 @@ Function Start-UnsupportedDevicePlatforms {
             New-MgIdentityConditionalAccessPolicy -BodyParameter $params
             Write-LogInfo "CA '$Name' created"
         }
-        Catch {
+        catch {
             Write-LogError "CA '$Name' not created"
         }
     }
@@ -645,7 +645,7 @@ Function Start-MobileDeviceAccessRequirements {
     $idBriceGlass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.glass@$domainOnM365" }).Id
     $idBriceDouglass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.douglass@$domainOnM365" }).Id
     if (-not $CondAccPol) {
-        Try {
+        try {
             $params = @{
                 displayName   = "$Name"
                 state         = "disabled"
@@ -686,7 +686,7 @@ Function Start-MobileDeviceAccessRequirements {
             New-MgIdentityConditionalAccessPolicy -BodyParameter $params
             Write-LogInfo "CA '$Name' created"
         }
-        Catch {
+        catch {
             Write-LogError "CA '$Name' not created"
         }
     }
@@ -721,7 +721,7 @@ Function Start-MobileAppsandDesktopClients {
     $idBriceDouglass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.douglass@$domainOnM365" }).Id
     $idTeamsService = (Get-MgServicePrincipal -Filter "DisplayName eq 'Microsoft Teams Services'").AppId
     if (-not $CondAccPol) {
-        Try {
+        try {
             $params = @{
                 displayName   = "$Name"
                 state         = "disabled"
@@ -763,7 +763,7 @@ Function Start-MobileAppsandDesktopClients {
             New-MgIdentityConditionalAccessPolicy -BodyParameter $params
             Write-LogInfo "Conditional Access '$Name' created"
         }
-        Catch {
+        catch {
             Write-LogError "CA '$Name' not created"
         }
     }
@@ -799,7 +799,7 @@ Function Start-HighRiskUsers {
         $idBriceDouglass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.douglass@$domainOnM365" }).Id
 
         if (-not $CondAccPol) {
-            Try {
+            try {
                 $params = @{
                     displayName   = "$Name"
                     state         = "disabled"
@@ -836,7 +836,7 @@ Function Start-HighRiskUsers {
                 New-MgIdentityConditionalAccessPolicy -BodyParameter $params
                 Write-LogInfo "CA '$Name' created"
             }
-            Catch {
+            catch {
                 Write-LogError "CA '$Name' not created"
             }
         }
@@ -875,7 +875,7 @@ Function Start-HighRiskSignIn {
         $idBriceDouglass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.douglass@$domainOnM365" }).Id
 
         if (-not $CondAccPol) {
-            Try {
+            try {
                 $params = @{
                     displayName   = "$Name"
                     state         = "disabled"
@@ -912,7 +912,7 @@ Function Start-HighRiskSignIn {
                 New-MgIdentityConditionalAccessPolicy -BodyParameter $params
                 Write-LogInfo "CA '$Name' created"
             }
-            Catch {
+            catch {
                 Write-LogError "CA '$Name' not created"
             }
         }

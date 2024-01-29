@@ -50,7 +50,7 @@ foreach ($line in $sLogoData) { Write-Host $line -ForegroundColor Red }
 
 ## CREDENTIALS
 try { 
-    Get-Command Get-Mgcontext -ErrorAction Stop > $null
+    $null = Get-Command Get-Mgcontext -ErrorAction Stop
     Write-Host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline
     Write-Host ("Check GRAPH Powershell Module OK") -ForegroundColor green
 }
@@ -82,7 +82,7 @@ catch {
         Write-Host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline
         Write-Host "NuGet Provider necessary" -ForegroundColor yellow
         Set-PSRepository -Name 'PSGallery' -InstallationPolicy Trusted  
-        Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force | Out-Null
+        $null = Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
     }
     # INSTALL GRAPH
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -92,7 +92,7 @@ catch {
     Set-PSRepository -Name 'PSGallery' -InstallationPolicy Untrusted
 }
 
-Try {
+try {
     Write-Host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline
     Write-Host("PLEASE CONNECT TO GRAPH WITH GLOBAL ADMINISTRATOR") -ForegroundColor Yellow
     Connect-MgGraph -ContextScope Process -Scopes Directory.Read.All, `

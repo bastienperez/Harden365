@@ -21,11 +21,11 @@ $dateString = Get-Date -Format 'FileDateTimeUniversal'
 
 $tenantFolderPath = Join-Path $pwd "$TenantName" 
 if (!(Test-Path -Path $tenantFolderPath)) {
-    New-Item -Path $pwd -Name "$TenantName"  -ItemType Directory > $null
+    $null = New-Item -Path $pwd -Name "$TenantName"  -ItemType Directory
 }
 
 $debugFileFullPath = Join-Path $tenantFolderPath "Debug$dateString.log"
-New-Item -Path $debugFileFullPath -ItemType File > $null
+$null = New-Item -Path $debugFileFullPath -ItemType File
 
 function Update-ProgressionBarOuterLoop {
     param(
@@ -78,7 +78,7 @@ function Write-LogInfo {
     )
 
     if (!$NoHostOutput) {
-        write-host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline
+        Write-Host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline
         Write-Host $Text -ForegroundColor Green
     }
     Write-LogInternal -Text $Text -InfoType '---> INFO:'
@@ -91,7 +91,7 @@ function Write-LogWarning {
         [switch]$NoHostOutput
     )
     if (!$NoHostOutput) {
-        write-host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline
+        Write-Host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline
         Write-Warning $Text
     }
     Write-LogInternal -Text $Text -InfoType '---! WARNING:'
@@ -104,7 +104,7 @@ function Write-LogError {
         [switch]$NoHostOutput
     )
     if (!$NoHostOutput) {
-        write-host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline
+        Write-Host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline
         Write-Host $Text -ForegroundColor Red
     }
     Write-LogInternal -Text $Text -InfoType '---! ERROR:'

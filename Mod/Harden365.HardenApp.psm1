@@ -55,7 +55,7 @@ Function Start-Harden365App {
             "endDateTime" = (Get-Date).AddMonths(+12)
         }
         $ClientSecret = Add-MgApplicationPassword -ApplicationId $HardenApp.Id -PasswordCredential $passwordCred
-        write-host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline ; Write-host ('Please keep Harden365 App secret : ') -ForegroundColor yellow -NoNewline ; Write-host $($ClientSecret.SecretText) -ForegroundColor Red
+        Write-Host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline ; Write-host ('Please keep Harden365 App secret : ') -ForegroundColor yellow -NoNewline ; Write-host $($ClientSecret.SecretText) -ForegroundColor Red
     }
 
     #endregion

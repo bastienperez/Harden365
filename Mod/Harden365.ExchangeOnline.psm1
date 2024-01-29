@@ -46,23 +46,23 @@ Function Start-EOAuditLog {
 
     #SCRIPT
     if ((Get-OrganizationConfig).isDehydrated -eq $true) {
-        Try { 
+        try { 
             Enable-OrganizationCustomization -ErrorAction Stop
             Set-AdminAuditLogConfig -UnifiedAuditLogIngestionEnabled $true -Force
             Write-LogInfo "Unified Audit Log enable"
         }
-        Catch {
+        catch {
             Write-LogError $_.Exception.Message
             Write-LogError "Unified Audit Log not enabled!"
         }
 
     }
     elseif ((Get-AdminAuditLogConfig).UnifiedAuditLogIngestionEnabled -eq $False) {
-        Try { 
+        try { 
             Set-AdminAuditLogConfig -UnifiedAuditLogIngestionEnabled $true -Force -ErrorAction Stop
             Write-LogInfo "Unified Audit Log enable"
         }
-        Catch {
+        catch {
             Write-LogError $_.Exception.Message
             Write-LogError "Unified Audit Log not enabled!"
         }
@@ -97,12 +97,12 @@ Function Start-EOAutoForwardGroup {
     #SCRIPT
     $GroupEOL = (Get-UnifiedGroup | Where-Object { $_.DisplayName -eq $Name }).Name
     if (-not $GroupEOL) {
-        Try {
+        try {
             $null = New-UnifiedGroup -Name $name -DisplayName $Name  -Alias $Alias -AccessType Private -Confirm:$false
             Set-UnifiedGroup -Identity $Name -HiddenFromAddressListsEnabled $true -HiddenFromExchangeClientsEnabled -UnifiedGroupWelcomeMessageEnabled:$false
             Write-LogInfo "Group '$Name' created"
         }
-        Catch {
+        catch {
             Write-LogError "Group '$Name' not created"
         }
     }
@@ -137,11 +137,11 @@ Function Start-EONotifQuarantine {
     #SCRIPT
     $CheckName = (Get-QuarantinePolicy | Where-Object { $_.Name -eq $Name }).Name
     if (-not $CheckName) {
-        Try {
+        try {
             $null = New-QuarantinePolicy -Name $Name -EndUserQuarantinePermissionsValue $EndUserQuarantinePermissionsValue -EndUserSpamNotificationFrequencyInDays $EndUserSpamNotificationFrequencyInDays -EsnEnabled $EsnEnabled
             Write-LogInfo "Quarantine Policy '$Name' created"
         }
-        Catch {
+        catch {
             Write-LogError "Quarantine Policy '$Name' not created"
         }
     }
@@ -177,7 +177,7 @@ Function Start-EOPAlertsMailbox {
         Write-LogWarning "Mailbox '$alias@$DomainOnM365' already created!"
     }
     else { 
-        Try {
+        try {
             New-Mailbox -Name $Name -Alias "AlertsMailbox" -Shared -PrimarySmtpAddress "$alias@$DomainOnM365"
             Set-Mailbox -Identity "$alias@$DomainOnM365" -HiddenFromAddressListsEnabled $true
             
@@ -188,7 +188,7 @@ Function Start-EOPAlertsMailbox {
             }
             Write-LogInfo "Mailbox '$alias@$DomainOnM365' created"
         }
-        Catch {
+        catch {
             Write-LogError "Mailbox '$alias@$DomainOnM365' not created"
         }
     }
@@ -239,14 +239,14 @@ Function Start-EOPAntispamPolicyStandard {
         
     }
     else {
-        Try { 
+        try { 
             Set-HostedContentFilterPolicy -Identity "Default" -HighConfidenceSpamAction $HighConfidenceSpamAction -SpamAction $SpamAction -BulkThreshold $BulkThreshold -QuarantineRetentionPeriod $QuarantineRetentionPeriod -EnableEndUserSpamNotifications $EnableEndUserSpamNotifications -BulkSpamAction $BulkSpamAction -PhishSpamAction $PhishSpamAction
             New-HostedContentFilterPolicy -Name $PolicyInboundName -HighConfidenceSpamAction $HighConfidenceSpamAction -SpamAction $SpamAction -BulkThreshold $BulkThreshold -QuarantineRetentionPeriod $QuarantineRetentionPeriod -EnableEndUserSpamNotifications $EnableEndUserSpamNotifications -BulkSpamAction $BulkSpamAction -PhishSpamAction $PhishSpamAction
             Write-LogInfo "$PolicyInboundName created"
             New-HostedContentFilterRule -Name $RuleInboundName -HostedContentFilterPolicy $PolicyInboundName -Priority $PriorityIn -RecipientDomainIs ((Get-AcceptedDomain).Name)
             Write-LogInfo "$RuleInboundName created"
         }
-        Catch {
+        catch {
             Write-LogError "$PolicyInboundName not created!"
         }
     }
@@ -257,14 +257,14 @@ Function Start-EOPAntispamPolicyStandard {
         
     }
     else {
-        Try { 
+        try { 
             Set-HostedOutboundSpamFilterPolicy -Identity "Default" -RecipientLimitExternalPerHour $RecipientLimitExternalPerHour -RecipientLimitInternalPerHour $RecipientLimitInternalPerHour -RecipientLimitPerDay $RecipientLimitPerDay -ActionWhenThresholdReached $ActionWhenThresholdReached -AutoForwardingMode $AutoForwardingMode
             New-HostedOutboundSpamFilterPolicy -Name $PolicyOutboundName -RecipientLimitExternalPerHour $RecipientLimitExternalPerHour -RecipientLimitInternalPerHour $RecipientLimitInternalPerHour -RecipientLimitPerDay $RecipientLimitPerDay -ActionWhenThresholdReached $ActionWhenThresholdReached -AutoForwardingMode $AutoForwardingMode
             Write-LogInfo "$PolicyOutboundName created"
             New-HostedOutboundSpamFilterRule -Name $RuleOutboundName -HostedOutboundSpamFilterPolicy $PolicyOutboundName -Priority $PriorityOut -SenderDomainIs ((Get-AcceptedDomain).Name)
             Write-LogInfo "$RuleOutboundName created"
         }
-        Catch {
+        catch {
             Write-LogError "$PolicyOutboundName not created!"
         }
     }
@@ -305,13 +305,13 @@ Function Start-EOPAntiForwardPolicy {
         
     }
     else {
-        Try { 
+        try { 
             New-HostedOutboundSpamFilterPolicy -Name $PolicyOutboundName -RecipientLimitExternalPerHour $RecipientLimitExternalPerHour -RecipientLimitInternalPerHour $RecipientLimitInternalPerHour -RecipientLimitPerDay $RecipientLimitPerDay -ActionWhenThresholdReached $ActionWhenThresholdReached -AutoForwardingMode $AutoForwardingMode
             Write-LogInfo "$PolicyOutboundName created"
             New-HostedOutboundSpamFilterRule -Name $RuleOutboundName -HostedOutboundSpamFilterPolicy $PolicyOutboundName -Priority $Priority -FromMemberOf $FromMemberOf
             Write-LogInfo "$RuleOutboundName created"
         }
-        Catch {
+        catch {
             Write-LogError "$PolicyOutboundName not created!"
         }
     }
@@ -352,14 +352,14 @@ Function Start-EOPAntiMalwarePolicy {
     #SCRIPT
     $DomainOnM365 = (Get-AcceptedDomain | Where-Object { $_.InitialDomain -match $true }).Name
     if ((Get-MalwareFilterRule).name -ne $RuleName) {
-        Try { 
+        try { 
             #Set-MalwareFilterPolicy -Identity "Default" -EnableFileFilter $EnableFileFilter
             New-MalwareFilterPolicy -Name $PolicyName -EnableFileFilter $EnableFileFilter -ZapEnabled $ZapEnabled -EnableExternalSenderAdminNotifications $EnableExternalSenderAdminNotifications -ExternalSenderAdminAddress "$Alerts@$DomainOnM365" -EnableInternalSenderAdminNotifications $EnableInternalSenderAdminNotifications -InternalSenderAdminAddress "$Alerts@$DomainOnM365" -FileTypes $FileTypes
             Write-LogInfo "$PolicyName created"
             New-MalwareFilterRule -Name $RuleName -MalwareFilterPolicy $PolicyName -Priority $Priority -RecipientDomainIs ((Get-AcceptedDomain).Name)
             Write-LogInfo "$RuleName created"
         }
-        Catch {
+        catch {
             Write-LogError "$PolicyName not created"
         }
     }
@@ -428,11 +428,11 @@ Function Start-EOPAntiMacroRule {
         Write-LogWarning "$RuleName already created"
     }
     else {
-        Try { 
+        try { 
             New-TransportRule -Name $RuleName -Priority $Priority -Mode $Mode -Enabled $false -RuleErrorAction $RuleErrorAction -AttachmentExtensionMatchesWords $AttachmentExtensionMatchesWords -ApplyHtmlDisclaimerLocation $ApplyHtmlDisclaimerLocation -ApplyHtmlDisclaimerText "$WarmDisclaimerFR" -ApplyHtmlDisclaimerFallbackAction $ApplyHtmlDisclaimerFallbackAction
             Write-LogInfo "$RuleName created"
         }
-        Catch {
+        catch {
             Write-LogError "$RuleName not created!"
         }
     }         
@@ -473,11 +473,11 @@ Function Start-EOPBypassSpamByDomains {
         Write-LogWarning "$RuleName already created"
     }
     else {
-        Try { 
+        try { 
             New-TransportRule -Name $RuleName -Priority $Priority -Mode $Mode -Enabled $false -RuleErrorAction $RuleErrorAction -SetSCL $SetSCL -SenderDomainIs $SenderDomainIs -SetHeaderName $SetHeaderName -SetHeaderValue $SetHeaderValue -HeaderContainsMessageHeader $HeaderContainsMessageHeader -HeaderContainsWords $HeaderContainsWords -FromScope $FromScope
             Write-LogInfo "$RuleName created"
         }
-        Catch {
+        catch {
             Write-LogError "$RuleName not created!"
         }
     } 

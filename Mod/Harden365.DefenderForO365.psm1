@@ -57,14 +57,14 @@ Function Start-DefenderO365P1AntiPhishingPolicy {
 
     #SCRIPT
     if ((Get-AntiPhishRule).name -ne $RuleName) {
-        Try { 
+        try { 
             $WarningActionPreference = "SilentlyContinue"
             Set-AntiPhishPolicy -Identity "Office365 AntiPhish Default" -EnableMailboxIntelligenceProtection $EnableMailboxIntelligenceProtection -EnableMailboxIntelligence $EnableMailboxIntelligenceProtection -MailboxIntelligenceProtectionAction $MailboxIntelligenceProtectionAction -EnableFirstContactSafetyTips $EnableFirstContactSafetyTips -EnableSimilarDomainsSafetyTips $EnableSimilarDomainsSafetyTips -EnableSimilarUsersSafetyTips $EnableSimilarUsersSafetyTips -TargetedUserProtectionAction $TargetedUserProtectionAction -EnableTargetedUserProtection $EnableTargetedUserProtection -EnableTargetedDomainsProtection $EnableTargetedDomainsProtection -EnableOrganizationDomainsProtection $EnableOrganizationDomainsProtection -TargetedDomainProtectionAction $TargetedDomainProtectionAction -EnableUnusualCharactersSafetyTips $EnableUnusualCharactersSafetyTips -PhishThresholdLevel $PhishThresholdLevel
             New-AntiPhishPolicy -Name $PolicyName -AdminDisplayName $PolicyName -TargetedDomainsToProtect ((Get-AcceptedDomain).Name) -EnableMailboxIntelligenceProtection $EnableMailboxIntelligenceProtection -EnableFirstContactSafetyTips $EnableFirstContactSafetyTips -EnableMailboxIntelligence $EnableMailboxIntelligence -MailboxIntelligenceProtectionAction $MailboxIntelligenceProtectionAction -EnableSimilarDomainsSafetyTips $EnableSimilarDomainsSafetyTips -EnableSimilarUsersSafetyTips $EnableSimilarUsersSafetyTips -TargetedUserProtectionAction $TargetedUserProtectionAction -EnableTargetedUserProtection $EnableTargetedUserProtection -EnableTargetedDomainsProtection $EnableTargetedDomainsProtection -EnableOrganizationDomainsProtection $EnableOrganizationDomainsProtection -TargetedDomainProtectionAction $TargetedDomainProtectionAction -EnableUnusualCharactersSafetyTips $EnableUnusualCharactersSafetyTips -PhishThresholdLevel $PhishThresholdLevel
             New-AntiPhishRule -Name $RuleName -AntiPhishPolicy $PolicyName -Priority $Priority -Enabled $Enabled -RecipientDomainIs ((Get-AcceptedDomain).Name)
             Write-LogInfo "$PolicyName created"  
         }
-        Catch {
+        catch {
             Write-LogError "$PolicyName not created!" 
         }
     }
@@ -105,13 +105,13 @@ Function Start-DefenderO365P1SafeAttachments {
     #SCRIPT
     $DomainOnM365 = (Get-AcceptedDomain | Where-Object { $_.InitialDomain -match $true }).Name
     if ((Get-SafeAttachmentRule).name -ne $RuleName) {
-        Try { 
+        try { 
             New-SafeAttachmentPolicy -Name $PolicyName -Enable $Enable -Action $Action -Redirect $Redirect -RedirectAddress "$Alias@$DomainOnM365"
             New-SafeAttachmentRule -Name $RuleName -SafeAttachmentPolicy $PolicyName -Priority $Priority -RecipientDomainIs ((Get-AcceptedDomain).Name)
             Set-AtpPolicyForO365 -EnableATPForSPOTeamsODB $EnableATPForSPOTeamsODB -EnableSafeDocs $EnableSafeDocs -AllowSafeDocsOpen $AllowSafeDocsOpen -WarningAction:SilentlyContinue
             Write-LogInfo "$PolicyName created"  
         }
-        Catch {
+        catch {
             Write-LogError "$PolicyName not created!" 
         }
     }
@@ -154,7 +154,7 @@ Function Start-DefenderO365P1SafeLinks {
     #SCRIPT
 
     if ((Get-SafeLinksRule).name -ne $RuleName) {
-        Try { 
+        try { 
             New-SafeLinksPolicy -Name $PolicyName -EnableSafeLinksForTeams $EnableSafeLinksForTeams -ScanUrls $ScanUrls -DeliverMessageAfterScan $DeliverMessageAfterScan -EnableForInternalSenders $EnableForInternalSenders -DoNotRewriteUrls $DoNotRewriteUrls -AllowClickThrough $AllowClickThrough -TrackClicks $TrackClicks
             if (-not (Get-SafeLinksPolicy -Identity $PolicyName).DoNotAllowClickThrough)
             {} else { Set-SafeLinksPolicy -Identity $PolicyName  -DoNotAllowClickThrough $DoNotAllowClickThrough }
@@ -163,7 +163,7 @@ Function Start-DefenderO365P1SafeLinks {
             New-SafeLinksRule -Name $RuleName -SafeLinksPolicy $PolicyName -Priority $Priority -RecipientDomainIs ((Get-AcceptedDomain).Name)
             Write-LogInfo "$PolicyName created"  
         }
-        Catch {
+        catch {
             Write-LogError "$PolicyName not created!" 
         }
     }

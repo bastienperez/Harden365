@@ -45,7 +45,7 @@ Function Start-LegacyPerUserMFA {
 
     Write-LogInfo "Import CSV File : $ImportCSV"
 
-    Try {
+    try {
         Import-CSV ".\Input\$ImportCSV" -Delimiter ";" | ForEach-Object {
             if ($_.ImportPhoneNumber -eq "YES") {
                 $Requirements = @()
