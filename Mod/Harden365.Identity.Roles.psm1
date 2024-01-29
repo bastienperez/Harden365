@@ -67,9 +67,11 @@ Function Get-AADRolesAuditP1 {
 
     #IMPORT LICENSE SKU
     Write-LogInfo "Import all Sku/productNames Licensing"
+
     $licenseCsvURL = 'https://download.microsoft.com/download/e/3/e/e3e9faf2-f28b-490a-9ada-c6089a1fc5b0/Product%20names%20and%20service%20plan%20identifiers%20for%20licensing.csv'
     $licenseHashTable = @{}
-(Invoke-WebRequest -Uri $licenseCsvURL).ToString() | ConvertFrom-Csv | ForEach-Object {
+
+    Invoke-RestMethod -Uri $licenseCsvURL | ConvertFrom-Csv | ForEach-Object {
         $licenseHashTable[$_.Product_Display_Name] = @{
             "SkuId"         = $_.GUID
             "SkuPartNumber" = $_.String_Id
@@ -80,9 +82,10 @@ Function Get-AADRolesAuditP1 {
     #IMPORT ROLE MEMBER
     Write-LogInfo "Import Assigned Roles"
     $roles = Get-MgDirectoryRole
-    $rolemembers = [System.Collections.Generic.List[Object]]::new()
+    $roleMembers = [System.Collections.Generic.List[PSObject]]::new()
+
     foreach ($role in $roles) {
-        $obj = [pscustomobject][ordered]@{
+        $obj = [PSCustomObject][ordered]@{
             "roleDisplayName" = $role.DisplayName
             "roleId"          = $role.id
             "membersid"       = (Get-MgDirectoryRoleMember -DirectoryRoleId $role.id).Id
@@ -94,7 +97,7 @@ Function Get-AADRolesAuditP1 {
     $Users = Get-MgUser -all -Property UserPrincipalName, PasswordPolicies, DisplayName, id, OnPremisesSyncEnabled, lastPasswordChangeDateTime, SignInActivity, Authentication
     Write-LogInfo "$($Users.count) users imported"
     Write-LogInfo "Generating report"
-    $Report = [System.Collections.Generic.List[Object]]::new()
+    $Report = [System.Collections.Generic.List[PSObject]]::new()
     $i = 0
     ForEach ($user in $Users) {
         # LICENSES
@@ -288,7 +291,8 @@ Function Get-AADRolesAuditP2 {
     Write-LogInfo "Import all Sku/productNames Licensing"
     $licenseCsvURL = 'https://download.microsoft.com/download/e/3/e/e3e9faf2-f28b-490a-9ada-c6089a1fc5b0/Product%20names%20and%20service%20plan%20identifiers%20for%20licensing.csv'
     $licenseHashTable = @{}
-(Invoke-WebRequest -Uri $licenseCsvURL).ToString() | ConvertFrom-Csv | ForEach-Object {
+
+    Invoke-RestMethod -Uri $licenseCsvURL | ConvertFrom-Csv | ForEach-Object {
         $licenseHashTable[$_.Product_Display_Name] = @{
             "SkuId"         = $_.GUID
             "SkuPartNumber" = $_.String_Id
@@ -300,9 +304,10 @@ Function Get-AADRolesAuditP2 {
     Write-LogInfo "Import Assigned Roles"
     $i = 0
     $roles = Get-MgDirectoryRole
-    $rolemembers = [System.Collections.Generic.List[Object]]::new()
+    $roleMembers = [System.Collections.Generic.List[PSObject]]::new()
+
     foreach ($role in $roles) {
-        $obj = [pscustomobject][ordered]@{
+        $obj = [PSCustomObject][ordered]@{
             "roleDisplayName" = $role.DisplayName
             "roleId"          = $role.id
             "membersid"       = (Get-MgDirectoryRoleMember -DirectoryRoleId $role.id).Id
@@ -314,8 +319,9 @@ Function Get-AADRolesAuditP2 {
 
     #IMPORT ROLE ELIGIBLE MEMBER
     #$EligibleAADUserData = @()
-    [System.Collections.Generic.List[PSObject]]$EligibleAADUserData = @()
-    [System.Collections.Generic.List[PSObject]]$EligibleAADGroupData = @()
+
+    $eligibleAADUserData = [System.Collections.Generic.List[PSObject]]::new()
+    $eligibleAADGroupData = [System.Collections.Generic.List[PSObject]]::new()
 
     Import-Module -Name Microsoft.Graph.Identity.Governance -Force
     $AllEligible = Get-MgRoleManagementDirectoryRoleEligibilityScheduleInstance -ExpandProperty "*" -All

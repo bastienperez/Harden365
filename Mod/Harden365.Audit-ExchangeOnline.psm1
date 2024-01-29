@@ -51,7 +51,7 @@ Function Start-EOPCheckAutoForward {
     #$AutoforwardTP = @()
     Get-TransportRule | Where-Object { $null -ne $_.RedirectMessageTo } | ForEach-Object {
         if ($_ -ne $null) {
-            "$(Get-Date -UFormat "%m-%d-%Y %T ") - Autoforwarding found in rule $($_.Name)  to $($_.RedirectMessageTo)" | Out-File "$debugFileFullPath" -Append
+            "$(Get-Date -UFormat "%m-%d-%Y %T ") - Autoforwarding found in rule $($_.Name) to $($_.RedirectMessageTo)" | Out-File "$debugFileFullPath" -Append
             Write-LogWarning "Autoforwarding found in rule $($_.Name)  to $($_.RedirectMessageTo)"
         }
     }

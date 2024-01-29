@@ -36,8 +36,8 @@ Function Get-MSOUsersList {
     @{Name = 'PhoneNumbers'; Expression = { ($_.StrongAuthenticationUserDetails).PhoneNumber } },
     @{Name = 'LicensePlans'; Expression = { (($_.licenses).Accountsku).SkupartNumber } }
                                                                
-    #$ExportUsers = @()
-    [System.Collections.Generic.List[PSObject]]$ExportUsers = @()
+    $ExportUsers = [System.Collections.Generic.List[PSObject]]::new()
+
     foreach ($user in $Users) {
 
         $LicenseNames = $user.LicensePlans

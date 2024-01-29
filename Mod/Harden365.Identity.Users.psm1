@@ -93,7 +93,7 @@ Function Get-MSOAuditUsers {
     $Users = Get-MgUser -all -Property UserPrincipalName, PasswordPolicies, DisplayName, id, OnPremisesSyncEnabled, lastPasswordChangeDateTime, SignInActivity, Authentication
     Write-LogInfo "$($Users.count) users imported"
     Write-LogInfo "Generating report"
-    $Report = [System.Collections.Generic.List[Object]]::new()
+    $Report = [System.Collections.Generic.List[PSObject]]::new()
     $i = 0
     ForEach ($user in $Users) {
         # LICENSES

@@ -50,7 +50,7 @@ foreach ($line in $sLogoData) { Write-Host $line -ForegroundColor Red }
 
 ## CREDENTIALS
 try { 
-    $null = Get-Command Get-Mgcontext -ErrorAction Stop
+    $null = Get-Command Get-MgContext -ErrorAction Stop
     Write-Host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline
     Write-Host ("Check GRAPH Powershell Module OK") -ForegroundColor green
 }

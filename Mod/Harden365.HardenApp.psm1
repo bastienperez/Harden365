@@ -78,8 +78,9 @@ Function Start-Harden365App {
     )
  
     #Add app permissions
-    [System.Collections.Generic.List[PSObject]]$ResourceAccessArray = @()
-    ForEach ($permission in $ApplicationPermissions) {
+    $resourceAccessArray = [System.Collections.Generic.List[PSObject]]::new()
+
+    foreach ($permission in $ApplicationPermissions) {
         $reqPermission = $null
         #Get required app permission
         $reqPermission = $graphSP.AppRoles | Where-Object { $_.Value -eq $permission }
