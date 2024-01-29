@@ -71,18 +71,24 @@ Function Start-OUTAudit {
     try {
         $OutAddins = (Get-EXOMailbox | Select-Object -Unique RoleAssignmentPolicy | ForEach-Object { 
                 Get-RoleAssignmentPolicy -Identity $_.RoleAssignmentPolicy | Where-Object {
-        ($_.AssignedRoles -like "*Apps*") -and ($_.IsDefault -eq $true) } } | Select-Object Identity, @{Name = "AssignedRoles"; Expression = { Get-Mailbox | Select-Object -Unique RoleAssignmentPolicy | ForEach-Object {
+                ($_.AssignedRoles -like "*Apps*") -and ($_.IsDefault) } } | 
+                    Select-Object Identity, @{Name = "AssignedRoles"; Expression = { Get-Mailbox | Select-Object -Unique RoleAssignmentPolicy | ForEach-Object {
                         Get-RoleAssignmentPolicy -Identity $_.RoleAssignmentPolicy | Select-Object -ExpandProperty AssignedRoles | Where-Object { $_ -like "*Apps*" } } }
-            })
+            
+                    }
+                )
 
-        if (!$OutAddins) { 
+        if (-not $OutAddins) { 
             Write-LogInfo "Outlook AddIns disable for self activation"
         }
         else {
             Write-LogWarning "Outlook AddIns is self activation enabled !"
         }
     }
-    catch { Write-LogError "Module error" }
+    catch {
+        Write-LogError "Module error"
+    }
+
     Write-LogSection '' -NoHostOutput      
 }
 

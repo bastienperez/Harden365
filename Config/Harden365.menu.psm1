@@ -531,23 +531,29 @@ function ApplicationMenu() {
         [String]$TenantEdition,
         [String]$O365ATP
     )
+    
     $ApplicationMenu = CreateMenu -TenantName $TenantName -TenantEdition $TenantEdition -O365ATP $O365ATP -MenuTitle "HARDEN 365 - APPLICATIONS" -MenuOptions @("Audit Applications", "Hardening Outlook", "Hardening MS Teams", "Hardening Sharepoint", "Hardening PowerPlatform", "<- Return")
+    
     switch ($ApplicationMenu) {
         0 {
             Write-Host $FrontStyle -ForegroundColor Red
             Write-Host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline ; Write-Host("AUDIT APPLICATIONS") -ForegroundColor Red
+            <# commented because not used
             Write-Host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline ; Write-host ('Connecting to MSOlService Powershell') -ForegroundColor Green
             try {
                 $null = Get-MsolDomain -ErrorAction Stop
             }
             catch { Connect-MsolService -WarningAction:SilentlyContinue }
-            
+            #>
             Write-Host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline ; Write-host ('Connecting to ExchangeOnline Powershell') -ForegroundColor Green
             
             try {
-                $null = et-OrganizationConfig
+                $null = Get-OrganizationConfig
             }
-            catch { Connect-ExchangeOnline -WarningAction:SilentlyContinue -ShowBanner:$false }
+            catch {
+                Connect-ExchangeOnline -WarningAction:SilentlyContinue -ShowBanner:$false
+            }
+
             try {
                 $null = Get-CsTenant -Erroraction Stop
             }
@@ -560,6 +566,7 @@ function ApplicationMenu() {
                     $null = Connect-MicrosoftTeams
                 }
             }
+            
             Write-Host $(Get-Date -UFormat "%m-%d-%Y %T ") -NoNewline ; Write-host ('Connecting to MSCommerce Powershell') -ForegroundColor Green
 
             $scriptFunctions = (Get-ChildItem function: | Where-Object { ($_.source -match 'Harden365.AuditApplications') -and ($_.Name -notmatch 'Start-OUTCheckAddIns') })
