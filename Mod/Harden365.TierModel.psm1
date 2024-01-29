@@ -51,7 +51,8 @@ Function Start-EmergencyAccount1 {
     if (!$isAdmin) {
         Write-LogError 'You must run this script as an administrator to install or execute PoshKeepass module'
         Write-LogError 'Script execution cancelled'
-        Pause; break 
+        Start-Sleep
+        break
     }
 
     #POSHKEEPASS INSTALL MODULE	
