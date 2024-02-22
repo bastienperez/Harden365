@@ -586,6 +586,13 @@ Function Start-UnsupportedDevicePlatforms {
     $CondAccPol = Get-MgIdentityConditionalAccessPolicy -Filter "DisplayName eq '$name'"
     $idBriceGlass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.glass@$domainOnM365" }).Id
     $idBriceDouglass = (Get-MgUser -All | Where-Object { $_.UserPrincipalName -eq "brice.douglass@$domainOnM365" }).Id
+    
+    # if account does not exist alerts
+    if($null -eq $idBriceGlas -or $null -eq $idBriceDouglass) {
+        Write-LogError "The breakglass account are not created, please run the breakglass accounts creation before"
+        return
+    }
+
     if (-not $CondAccPol) {
         try {
             $params = @{
